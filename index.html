@@ -18,28 +18,30 @@
       </div>
     </div>
     <div id="main">
-      
+
     </div>
     <div id="footer">&copy; 2010 Aaron Quint, Quirkey NYC, LLC</div>
   </div>
-  <div id="action-index">
-    <div id="action-form">
-      <div class="action-preview"></div>
-      <form class="bp" action="#/action" method="post">
-        <p>
-          <input name="content" class="content-input">
-        </p>
-        <p><input type="submit" name="save" value="save"></p>
-      </form>
+  <div style="display:none;">
+    <div id="action-index">
+      <div id="action-form">
+        <div class="action-preview"></div>
+        <form class="bp" action="#/action" method="post">
+          <p>
+            <input name="action[content]" class="content-input">
+          </p>
+          <p><input type="submit" name="save" value="save"></p>
+        </form>
+      </div>
+      <div id="actions"></div>
     </div>
-    <div id="actions"></div>
-  </div>
-  <div id="action-template">
-    <div class="action">
-      <div class="content"></div>
-      <div class="meta">
-        <div class="created_at"></div>
-        <div class="completed_at"></div>
+    <div id="action-template">
+      <div class="action">
+        <div class="content"></div>
+        <div class="meta">
+          <div class="created_at"></div>
+          <div class="completed_at"></div>
+        </div>
       </div>
     </div>
   </div>
