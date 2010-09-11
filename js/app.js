@@ -29,18 +29,30 @@
       showLoading();
     });
 
-    this.get('#/', function(context) {
+    this.get('#/', function(ctx) {
       this.load($('#action-index'))
           .replace('#main')
+          .then(function() {
+            var rctx = this;
+            rctx.wait();
+            Action.all(function(docs) {
+              Sammy.log(docs, rctx.waiting);
+              rctx.content = docs;
+              rctx.next();
+            });
+            return false;
+          })
+          .then(function(content) {
+            ctx.log('should wait', content);
+          })
           .then(hideLoading);
 
-      this.db().allDocs(function(docs) {
-        this.log("docs", docs);
-      });
     });
 
-    this.post('#/action', function(context) {
-      Action.create(this.params['action']);
+    this.post('#/action', function(ctx) {
+      Action.create(this.params['action'], function(response) {
+        ctx.log(response);
+      });
     });
 
   }).run('#/');

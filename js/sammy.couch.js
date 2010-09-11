@@ -51,8 +51,13 @@
         extend: function(obj) {
           $.extend(this, obj);
         },
+        all: function(callback) {
+          return app.db.allDocs($.extend(mergeCallbacks(callback), {
+            include_docs: true
+          }));
+        },
         create: function(doc, callback) {
-          return db.saveDoc(mergeDefaultDocument(doc), mergeCallbacks(callback));
+          return app.db.saveDoc(mergeDefaultDocument(doc), mergeCallbacks(callback));
         }
       }
     };
