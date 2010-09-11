@@ -1,10 +1,48 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>action!</title>
-    <link rel="stylesheet" href="css/app.css" type="text/css" media="screen" charset="utf-8"/>
-  </head>
-  <body>
-    <script src="js/default.js" type="text/javascript" charset="utf-8"></script>
-  </body>
+<head>
+  <title>action!</title>
+
+  <link href="css/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <link href="css/print.css" media="print" rel="stylesheet" type="text/css" />
+  <!--[if lt IE 8]>
+  <link href="css/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <![endif]-->
+</head>
+<body class="bp">
+  <div id="container">
+    <div id="header">
+      <h1>action =></h1>
+      <div id="loading" style="display:none">
+        loading <img src="images/loader.gif" alt="loading" />
+      </div>
+    </div>
+    <div id="main">
+      
+    </div>
+    <div id="footer">&copy; 2010 Aaron Quint, Quirkey NYC, LLC</div>
+  </div>
+  <div id="action-index">
+    <div id="action-form">
+      <div class="action-preview"></div>
+      <form class="bp" action="#/action" method="post">
+        <p>
+          <input name="content" class="content-input">
+        </p>
+        <p><input type="submit" name="save" value="save"></p>
+      </form>
+    </div>
+    <div id="actions"></div>
+  </div>
+  <div id="action-template">
+    <div class="action">
+      <div class="content"></div>
+      <div class="meta">
+        <div class="created_at"></div>
+        <div class="completed_at"></div>
+      </div>
+    </div>
+  </div>
+  <script src="js/default.js" type="text/javascript" charset="utf-8"></script>
+</body>
 </html>

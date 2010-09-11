@@ -1,481 +1,205 @@
 /*
-    http://www.JSON.org/json2.js
-    2009-04-16
+ * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
+ * in FIPS PUB 180-1
+ * Version 2.1a Copyright Paul Johnston 2000 - 2002.
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for details.
+ */
 
-    Public Domain.
+/*
+ * Configurable variables. You may need to tweak these to be compatible with
+ * the server-side, but the defaults work in most cases.
+ */
+var hexcase = 0;  /* hex output format. 0 - lowercase; 1 - uppercase        */
+var b64pad  = "="; /* base-64 pad character. "=" for strict RFC compliance   */
+var chrsz   = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
 
-    NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+/*
+ * These are the functions you'll usually want to call
+ * They take string arguments and return either hex or base-64 encoded strings
+ */
+function hex_sha1(s){return binb2hex(core_sha1(str2binb(s),s.length * chrsz));}
+function b64_sha1(s){return binb2b64(core_sha1(str2binb(s),s.length * chrsz));}
+function str_sha1(s){return binb2str(core_sha1(str2binb(s),s.length * chrsz));}
+function hex_hmac_sha1(key, data){ return binb2hex(core_hmac_sha1(key, data));}
+function b64_hmac_sha1(key, data){ return binb2b64(core_hmac_sha1(key, data));}
+function str_hmac_sha1(key, data){ return binb2str(core_hmac_sha1(key, data));}
 
-    See http://www.JSON.org/js.html
-
-    This file creates a global JSON object containing two methods: stringify
-    and parse.
-
-        JSON.stringify(value, replacer, space)
-            value       any JavaScript value, usually an object or array.
-
-            replacer    an optional parameter that determines how object
-                        values are stringified for objects. It can be a
-                        function or an array of strings.
-
-            space       an optional parameter that specifies the indentation
-                        of nested structures. If it is omitted, the text will
-                        be packed without extra whitespace. If it is a number,
-                        it will specify the number of spaces to indent at each
-                        level. If it is a string (such as '\t' or '&nbsp;'),
-                        it contains the characters used to indent at each level.
-
-            This method produces a JSON text from a JavaScript value.
-
-            When an object value is found, if the object contains a toJSON
-            method, its toJSON method will be called and the result will be
-            stringified. A toJSON method does not serialize: it returns the
-            value represented by the name/value pair that should be serialized,
-            or undefined if nothing should be serialized. The toJSON method
-            will be passed the key associated with the value, and this will be
-            bound to the object holding the key.
-
-            For example, this would serialize Dates as ISO strings.
-
-                Date.prototype.toJSON = function (key) {
-                    function f(n) {
-                        // Format integers to have at least two digits.
-                        return n < 10 ? '0' + n : n;
-                    }
-
-                    return this.getUTCFullYear()   + '-' +
-                         f(this.getUTCMonth() + 1) + '-' +
-                         f(this.getUTCDate())      + 'T' +
-                         f(this.getUTCHours())     + ':' +
-                         f(this.getUTCMinutes())   + ':' +
-                         f(this.getUTCSeconds())   + 'Z';
-                };
-
-            You can provide an optional replacer method. It will be passed the
-            key and value of each member, with this bound to the containing
-            object. The value that is returned from your method will be
-            serialized. If your method returns undefined, then the member will
-            be excluded from the serialization.
-
-            If the replacer parameter is an array of strings, then it will be
-            used to select the members to be serialized. It filters the results
-            such that only members with keys listed in the replacer array are
-            stringified.
-
-            Values that do not have JSON representations, such as undefined or
-            functions, will not be serialized. Such values in objects will be
-            dropped; in arrays they will be replaced with null. You can use
-            a replacer function to replace those with JSON values.
-            JSON.stringify(undefined) returns undefined.
-
-            The optional space parameter produces a stringification of the
-            value that is filled with line breaks and indentation to make it
-            easier to read.
-
-            If the space parameter is a non-empty string, then that string will
-            be used for indentation. If the space parameter is a number, then
-            the indentation will be that many spaces.
-
-            Example:
-
-            text = JSON.stringify(['e', {pluribus: 'unum'}]);
-            // text is '["e",{"pluribus":"unum"}]'
-
-
-            text = JSON.stringify(['e', {pluribus: 'unum'}], null, '\t');
-            // text is '[\n\t"e",\n\t{\n\t\t"pluribus": "unum"\n\t}\n]'
-
-            text = JSON.stringify([new Date()], function (key, value) {
-                return this[key] instanceof Date ?
-                    'Date(' + this[key] + ')' : value;
-            });
-            // text is '["Date(---current time---)"]'
-
-
-        JSON.parse(text, reviver)
-            This method parses a JSON text to produce an object or array.
-            It can throw a SyntaxError exception.
-
-            The optional reviver parameter is a function that can filter and
-            transform the results. It receives each of the keys and values,
-            and its return value is used instead of the original value.
-            If it returns what it received, then the structure is not modified.
-            If it returns undefined then the member is deleted.
-
-            Example:
-
-            // Parse the text. Values that look like ISO date strings will
-            // be converted to Date objects.
-
-            myData = JSON.parse(text, function (key, value) {
-                var a;
-                if (typeof value === 'string') {
-                    a =
-/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
-                    if (a) {
-                        return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
-                            +a[5], +a[6]));
-                    }
-                }
-                return value;
-            });
-
-            myData = JSON.parse('["Date(09/09/2001)"]', function (key, value) {
-                var d;
-                if (typeof value === 'string' &&
-                        value.slice(0, 5) === 'Date(' &&
-                        value.slice(-1) === ')') {
-                    d = new Date(value.slice(5, -1));
-                    if (d) {
-                        return d;
-                    }
-                }
-                return value;
-            });
-
-
-    This is a reference implementation. You are free to copy, modify, or
-    redistribute.
-
-    This code should be minified before deployment.
-    See http://javascript.crockford.com/jsmin.html
-
-    USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
-    NOT CONTROL.
-*/
-
-/*jslint evil: true */
-
-/*global JSON */
-
-/*members "", "\b", "\t", "\n", "\f", "\r", "\"", JSON, "\\", apply,
-    call, charCodeAt, getUTCDate, getUTCFullYear, getUTCHours,
-    getUTCMinutes, getUTCMonth, getUTCSeconds, hasOwnProperty, join,
-    lastIndex, length, parse, prototype, push, replace, slice, stringify,
-    test, toJSON, toString, valueOf
-*/
-
-// Create a JSON object only if one does not already exist. We create the
-// methods in a closure to avoid creating global variables.
-
-if (!this.JSON) {
-    JSON = {};
+/*
+ * Perform a simple self-test to see if the VM is working
+ */
+function sha1_vm_test()
+{
+  return hex_sha1("abc") == "a9993e364706816aba3e25717850c26c9cd0d89d";
 }
-(function () {
 
-    function f(n) {
-        // Format integers to have at least two digits.
-        return n < 10 ? '0' + n : n;
+/*
+ * Calculate the SHA-1 of an array of big-endian words, and a bit length
+ */
+function core_sha1(x, len)
+{
+  /* append padding */
+  x[len >> 5] |= 0x80 << (24 - len % 32);
+  x[((len + 64 >> 9) << 4) + 15] = len;
+
+  var w = Array(80);
+  var a =  1732584193;
+  var b = -271733879;
+  var c = -1732584194;
+  var d =  271733878;
+  var e = -1009589776;
+
+  for(var i = 0; i < x.length; i += 16)
+  {
+    var olda = a;
+    var oldb = b;
+    var oldc = c;
+    var oldd = d;
+    var olde = e;
+
+    for(var j = 0; j < 80; j++)
+    {
+      if(j < 16) w[j] = x[i + j];
+      else w[j] = rol(w[j-3] ^ w[j-8] ^ w[j-14] ^ w[j-16], 1);
+      var t = safe_add(safe_add(rol(a, 5), sha1_ft(j, b, c, d)),
+                       safe_add(safe_add(e, w[j]), sha1_kt(j)));
+      e = d;
+      d = c;
+      c = rol(b, 30);
+      b = a;
+      a = t;
     }
 
-    if (typeof Date.prototype.toJSON !== 'function') {
+    a = safe_add(a, olda);
+    b = safe_add(b, oldb);
+    c = safe_add(c, oldc);
+    d = safe_add(d, oldd);
+    e = safe_add(e, olde);
+  }
+  return Array(a, b, c, d, e);
 
-        Date.prototype.toJSON = function (key) {
+}
 
-            return this.getUTCFullYear()   + '-' +
-                 f(this.getUTCMonth() + 1) + '-' +
-                 f(this.getUTCDate())      + 'T' +
-                 f(this.getUTCHours())     + ':' +
-                 f(this.getUTCMinutes())   + ':' +
-                 f(this.getUTCSeconds())   + 'Z';
-        };
+/*
+ * Perform the appropriate triplet combination function for the current
+ * iteration
+ */
+function sha1_ft(t, b, c, d)
+{
+  if(t < 20) return (b & c) | ((~b) & d);
+  if(t < 40) return b ^ c ^ d;
+  if(t < 60) return (b & c) | (b & d) | (c & d);
+  return b ^ c ^ d;
+}
 
-        String.prototype.toJSON =
-        Number.prototype.toJSON =
-        Boolean.prototype.toJSON = function (key) {
-            return this.valueOf();
-        };
+/*
+ * Determine the appropriate additive constant for the current iteration
+ */
+function sha1_kt(t)
+{
+  return (t < 20) ?  1518500249 : (t < 40) ?  1859775393 :
+         (t < 60) ? -1894007588 : -899497514;
+}
+
+/*
+ * Calculate the HMAC-SHA1 of a key and some data
+ */
+function core_hmac_sha1(key, data)
+{
+  var bkey = str2binb(key);
+  if(bkey.length > 16) bkey = core_sha1(bkey, key.length * chrsz);
+
+  var ipad = Array(16), opad = Array(16);
+  for(var i = 0; i < 16; i++)
+  {
+    ipad[i] = bkey[i] ^ 0x36363636;
+    opad[i] = bkey[i] ^ 0x5C5C5C5C;
+  }
+
+  var hash = core_sha1(ipad.concat(str2binb(data)), 512 + data.length * chrsz);
+  return core_sha1(opad.concat(hash), 512 + 160);
+}
+
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+function safe_add(x, y)
+{
+  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return (msw << 16) | (lsw & 0xFFFF);
+}
+
+/*
+ * Bitwise rotate a 32-bit number to the left.
+ */
+function rol(num, cnt)
+{
+  return (num << cnt) | (num >>> (32 - cnt));
+}
+
+/*
+ * Convert an 8-bit or 16-bit string to an array of big-endian words
+ * In 8-bit function, characters >255 have their hi-byte silently ignored.
+ */
+function str2binb(str)
+{
+  var bin = Array();
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < str.length * chrsz; i += chrsz)
+    bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (32 - chrsz - i%32);
+  return bin;
+}
+
+/*
+ * Convert an array of big-endian words to a string
+ */
+function binb2str(bin)
+{
+  var str = "";
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < bin.length * 32; i += chrsz)
+    str += String.fromCharCode((bin[i>>5] >>> (32 - chrsz - i%32)) & mask);
+  return str;
+}
+
+/*
+ * Convert an array of big-endian words to a hex string.
+ */
+function binb2hex(binarray)
+{
+  var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i++)
+  {
+    str += hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8+4)) & 0xF) +
+           hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8  )) & 0xF);
+  }
+  return str;
+}
+
+/*
+ * Convert an array of big-endian words to a base-64 string
+ */
+function binb2b64(binarray)
+{
+  var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i += 3)
+  {
+    var triplet = (((binarray[i   >> 2] >> 8 * (3 -  i   %4)) & 0xFF) << 16)
+                | (((binarray[i+1 >> 2] >> 8 * (3 - (i+1)%4)) & 0xFF) << 8 )
+                |  ((binarray[i+2 >> 2] >> 8 * (3 - (i+2)%4)) & 0xFF);
+    for(var j = 0; j < 4; j++)
+    {
+      if(i * 8 + j * 6 > binarray.length * 32) str += b64pad;
+      else str += tab.charAt((triplet >> 6*(3-j)) & 0x3F);
     }
-
-    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-        gap,
-        indent,
-        meta = {    // table of character substitutions
-            '\b': '\\b',
-            '\t': '\\t',
-            '\n': '\\n',
-            '\f': '\\f',
-            '\r': '\\r',
-            '"' : '\\"',
-            '\\': '\\\\'
-        },
-        rep;
-
-
-    function quote(string) {
-
-// If the string contains no control characters, no quote characters, and no
-// backslash characters, then we can safely slap some quotes around it.
-// Otherwise we must also replace the offending characters with safe escape
-// sequences.
-
-        escapable.lastIndex = 0;
-        return escapable.test(string) ?
-            '"' + string.replace(escapable, function (a) {
-                var c = meta[a];
-                return typeof c === 'string' ? c :
-                    '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-            }) + '"' :
-            '"' + string + '"';
-    }
-
-
-    function str(key, holder) {
-
-// Produce a string from holder[key].
-
-        var i,          // The loop counter.
-            k,          // The member key.
-            v,          // The member value.
-            length,
-            mind = gap,
-            partial,
-            value = holder[key];
-
-// If the value has a toJSON method, call it to obtain a replacement value.
-
-        if (value && typeof value === 'object' &&
-                typeof value.toJSON === 'function') {
-            value = value.toJSON(key);
-        }
-
-// If we were called with a replacer function, then call the replacer to
-// obtain a replacement value.
-
-        if (typeof rep === 'function') {
-            value = rep.call(holder, key, value);
-        }
-
-// What happens next depends on the value's type.
-
-        switch (typeof value) {
-        case 'string':
-            return quote(value);
-
-        case 'number':
-
-// JSON numbers must be finite. Encode non-finite numbers as null.
-
-            return isFinite(value) ? String(value) : 'null';
-
-        case 'boolean':
-        case 'null':
-
-// If the value is a boolean or null, convert it to a string. Note:
-// typeof null does not produce 'null'. The case is included here in
-// the remote chance that this gets fixed someday.
-
-            return String(value);
-
-// If the type is 'object', we might be dealing with an object or an array or
-// null.
-
-        case 'object':
-
-// Due to a specification blunder in ECMAScript, typeof null is 'object',
-// so watch out for that case.
-
-            if (!value) {
-                return 'null';
-            }
-
-// Make an array to hold the partial results of stringifying this object value.
-
-            gap += indent;
-            partial = [];
-
-// Is the value an array?
-
-            if (Object.prototype.toString.apply(value) === '[object Array]') {
-
-// The value is an array. Stringify every element. Use null as a placeholder
-// for non-JSON values.
-
-                length = value.length;
-                for (i = 0; i < length; i += 1) {
-                    partial[i] = str(i, value) || 'null';
-                }
-
-// Join all of the elements together, separated with commas, and wrap them in
-// brackets.
-
-                v = partial.length === 0 ? '[]' :
-                    gap ? '[\n' + gap +
-                            partial.join(',\n' + gap) + '\n' +
-                                mind + ']' :
-                          '[' + partial.join(',') + ']';
-                gap = mind;
-                return v;
-            }
-
-// If the replacer is an array, use it to select the members to be stringified.
-
-            if (rep && typeof rep === 'object') {
-                length = rep.length;
-                for (i = 0; i < length; i += 1) {
-                    k = rep[i];
-                    if (typeof k === 'string') {
-                        v = str(k, value);
-                        if (v) {
-                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                        }
-                    }
-                }
-            } else {
-
-// Otherwise, iterate through all of the keys in the object.
-
-                for (k in value) {
-                    if (Object.hasOwnProperty.call(value, k)) {
-                        v = str(k, value);
-                        if (v) {
-                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                        }
-                    }
-                }
-            }
-
-// Join all of the member texts together, separated with commas,
-// and wrap them in braces.
-
-            v = partial.length === 0 ? '{}' :
-                gap ? '{\n' + gap + partial.join(',\n' + gap) + '\n' +
-                        mind + '}' : '{' + partial.join(',') + '}';
-            gap = mind;
-            return v;
-        }
-    }
-
-// If the JSON object does not yet have a stringify method, give it one.
-
-    if (typeof JSON.stringify !== 'function') {
-        JSON.stringify = function (value, replacer, space) {
-
-// The stringify method takes a value and an optional replacer, and an optional
-// space parameter, and returns a JSON text. The replacer can be a function
-// that can replace values, or an array of strings that will select the keys.
-// A default replacer method can be provided. Use of the space parameter can
-// produce text that is more easily readable.
-
-            var i;
-            gap = '';
-            indent = '';
-
-// If the space parameter is a number, make an indent string containing that
-// many spaces.
-
-            if (typeof space === 'number') {
-                for (i = 0; i < space; i += 1) {
-                    indent += ' ';
-                }
-
-// If the space parameter is a string, it will be used as the indent string.
-
-            } else if (typeof space === 'string') {
-                indent = space;
-            }
-
-// If there is a replacer, it must be a function or an array.
-// Otherwise, throw an error.
-
-            rep = replacer;
-            if (replacer && typeof replacer !== 'function' &&
-                    (typeof replacer !== 'object' ||
-                     typeof replacer.length !== 'number')) {
-                throw new Error('JSON.stringify');
-            }
-
-// Make a fake root object containing our value under the key of ''.
-// Return the result of stringifying the value.
-
-            return str('', {'': value});
-        };
-    }
-
-
-// If the JSON object does not yet have a parse method, give it one.
-
-    if (typeof JSON.parse !== 'function') {
-        JSON.parse = function (text, reviver) {
-
-// The parse method takes a text and an optional reviver function, and returns
-// a JavaScript value if the text is a valid JSON text.
-
-            var j;
-
-            function walk(holder, key) {
-
-// The walk method is used to recursively walk the resulting structure so
-// that modifications can be made.
-
-                var k, v, value = holder[key];
-                if (value && typeof value === 'object') {
-                    for (k in value) {
-                        if (Object.hasOwnProperty.call(value, k)) {
-                            v = walk(value, k);
-                            if (v !== undefined) {
-                                value[k] = v;
-                            } else {
-                                delete value[k];
-                            }
-                        }
-                    }
-                }
-                return reviver.call(holder, key, value);
-            }
-
-
-// Parsing happens in four stages. In the first stage, we replace certain
-// Unicode characters with escape sequences. JavaScript handles many characters
-// incorrectly, either silently deleting them, or treating them as line endings.
-
-            cx.lastIndex = 0;
-            if (cx.test(text)) {
-                text = text.replace(cx, function (a) {
-                    return '\\u' +
-                        ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-                });
-            }
-
-// In the second stage, we run the text against regular expressions that look
-// for non-JSON patterns. We are especially concerned with '()' and 'new'
-// because they can cause invocation, and '=' because it can cause mutation.
-// But just to be safe, we want to reject all unexpected forms.
-
-// We split the second stage into 4 regexp operations in order to work around
-// crippling inefficiencies in IE's and Safari's regexp engines. First we
-// replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
-// replace all simple value tokens with ']' characters. Third, we delete all
-// open brackets that follow a colon or comma or that begin the text. Finally,
-// we look to see that the remaining characters are only whitespace or ']' or
-// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
-
-            if (/^[\],:{}\s]*$/.
-test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@').
-replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-
-// In the third stage we use the eval function to compile the text into a
-// JavaScript structure. The '{' operator is subject to a syntactic ambiguity
-// in JavaScript: it can begin a block or an object literal. We wrap the text
-// in parens to eliminate the ambiguity.
-
-                j = eval('(' + text + ')');
-
-// In the optional fourth stage, we recursively walk the new structure, passing
-// each name/value pair to a reviver function for possible transformation.
-
-                return typeof reviver === 'function' ?
-                    walk({'': j}, '') : j;
-            }
-
-// If the text is not JSON parseable, then a SyntaxError is thrown.
-
-            throw new SyntaxError('JSON.parse');
-        };
-    }
-}());
+  }
+  return str;
+}
 
 /*!
  * jQuery JavaScript Library v1.4.2
@@ -6718,8 +6442,678 @@ window.jQuery = window.$ = jQuery;
 
 })(window);
 
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not
+// use this file except in compliance with the License. You may obtain a copy of
+// the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations under
+// the License.
+
+(function($) {
+  $.couch = $.couch || {};
+
+  function encodeDocId(docID) {
+    var parts = docID.split("/");
+    if (parts[0] == "_design") {
+      parts.shift();
+      return "_design/" + encodeURIComponent(parts.join('/'));
+    }
+    return encodeURIComponent(docID);
+  };
+
+  function prepareUserDoc(user_doc, new_password) {    
+    if (typeof hex_sha1 == "undefined") {
+      alert("creating a user doc requires sha1.js to be loaded in the page");
+      return;
+    }
+    var user_prefix = "org.couchdb.user:";
+    user_doc._id = user_doc._id || user_prefix + user_doc.name;
+    if (new_password) {
+      // handle the password crypto
+      user_doc.salt = $.couch.newUUID();
+      user_doc.password_sha = hex_sha1(new_password + user_doc.salt);
+    }
+    user_doc.type = "user";
+    if (!user_doc.roles) {
+      user_doc.roles = []
+    }
+    return user_doc;
+  };
+
+  var uuidCache = [];
+
+  $.extend($.couch, {
+    urlPrefix: '',
+    activeTasks: function(options) {
+      ajax(
+        {url: this.urlPrefix + "/_active_tasks"},
+        options,
+        "Active task status could not be retrieved"
+      );
+    },
+
+    allDbs: function(options) {
+      ajax(
+        {url: this.urlPrefix + "/_all_dbs"},
+        options,
+        "An error occurred retrieving the list of all databases"
+      );
+    },
+
+    config: function(options, section, option, value) {
+      var req = {url: this.urlPrefix + "/_config/"};
+      if (section) {
+        req.url += encodeURIComponent(section) + "/";
+        if (option) {
+          req.url += encodeURIComponent(option);
+        }
+      }
+      if (value === null) {
+        req.type = "DELETE";        
+      } else if (value !== undefined) {
+        req.type = "PUT";
+        req.data = toJSON(value);
+        req.contentType = "application/json";
+        req.processData = false
+      }
+
+      ajax(req, options,
+        "An error occurred retrieving/updating the server configuration"
+      );
+    },
+    
+    session: function(options) {
+      options = options || {};
+      $.ajax({
+        type: "GET", url: this.urlPrefix + "/_session",
+        complete: function(req) {
+          var resp = $.httpData(req, "json");
+          if (req.status == 200) {
+            if (options.success) options.success(resp);
+          } else if (options.error) {
+            options.error(req.status, resp.error, resp.reason);
+          } else {
+            alert("An error occurred getting session info: " + resp.reason);
+          }
+        }
+      });
+    },
+
+    userDb : function(callback) {
+      $.couch.session({
+        success : function(resp) {
+          var userDb = $.couch.db(resp.info.authentication_db);
+          callback(userDb);
+        }
+      });
+    },
+
+    signup: function(user_doc, password, options) {      
+      options = options || {};
+      // prepare user doc based on name and password
+      user_doc = prepareUserDoc(user_doc, password);
+      $.couch.userDb(function(db) {
+        db.saveDoc(user_doc, options);
+      })
+    },
+    
+    login: function(options) {
+      options = options || {};
+      $.ajax({
+        type: "POST", url: this.urlPrefix + "/_session", dataType: "json",
+        data: {name: options.name, password: options.password},
+        complete: function(req) {
+          var resp = $.httpData(req, "json");
+          if (req.status == 200) {
+            if (options.success) options.success(resp);
+          } else if (options.error) {
+            options.error(req.status, resp.error, resp.reason);
+          } else {
+            alert("An error occurred logging in: " + resp.reason);
+          }
+        }
+      });
+    },
+    
+    logout: function(options) {
+      options = options || {};
+      $.ajax({
+        type: "DELETE", url: this.urlPrefix + "/_session", dataType: "json",
+        username : "_", password : "_",
+        complete: function(req) {
+          var resp = $.httpData(req, "json");
+          if (req.status == 200) {
+            if (options.success) options.success(resp);
+          } else if (options.error) {
+            options.error(req.status, resp.error, resp.reason);
+          } else {
+            alert("An error occurred logging out: " + resp.reason);
+          }
+        }
+      });
+    },
+
+    db: function(name, db_opts) {
+      db_opts = db_opts || {};
+      var rawDocs = {};
+      function maybeApplyVersion(doc) {
+        if (doc._id && doc._rev && rawDocs[doc._id] && rawDocs[doc._id].rev == doc._rev) {
+          // todo: can we use commonjs require here?
+          if (typeof Base64 == "undefined") {
+            alert("please include /_utils/script/base64.js in the page for base64 support");
+            return false;
+          } else {
+            doc._attachments = doc._attachments || {};
+            doc._attachments["rev-"+doc._rev.split("-")[0]] = {
+              content_type :"application/json",
+              data : Base64.encode(rawDocs[doc._id].raw)
+            }
+            return true;
+          }
+        }
+      };
+      return {
+        name: name,
+        uri: this.urlPrefix + "/" + encodeURIComponent(name) + "/",
+
+        compact: function(options) {
+          $.extend(options, {successStatus: 202});
+          ajax({
+              type: "POST", url: this.uri + "_compact",
+              data: "", processData: false
+            },
+            options,
+            "The database could not be compacted"
+          );
+        },
+        viewCleanup: function(options) {
+          $.extend(options, {successStatus: 202});
+          ajax({
+              type: "POST", url: this.uri + "_view_cleanup",
+              data: "", processData: false
+            },
+            options,
+            "The views could not be cleaned up"
+          );
+        },
+        compactView: function(groupname, options) {
+          $.extend(options, {successStatus: 202});
+          ajax({
+              type: "POST", url: this.uri + "_compact/" + groupname,
+              data: "", processData: false
+            },
+            options,
+            "The view could not be compacted"
+          );
+        },
+        create: function(options) {
+          $.extend(options, {successStatus: 201});
+          ajax({
+              type: "PUT", url: this.uri, contentType: "application/json",
+              data: "", processData: false
+            },
+            options,
+            "The database could not be created"
+          );
+        },
+        drop: function(options) {
+          ajax(
+            {type: "DELETE", url: this.uri},
+            options,
+            "The database could not be deleted"
+          );
+        },
+        info: function(options) {
+          ajax(
+            {url: this.uri},
+            options,
+            "Database information could not be retrieved"
+          );
+        },
+        changes: function(since, options) {
+          options = options || {};
+          // set up the promise object within a closure for this handler
+          var timeout = 100, db = this, active = true,
+            listeners = [],
+            promise = {
+            onChange : function(fun) {
+              listeners.push(fun);
+            },
+            stop : function() {
+              active = false;
+            }
+          };
+          // call each listener when there is a change
+          function triggerListeners(resp) {
+            $.each(listeners, function() {
+              this(resp);
+            });
+          };
+          // when there is a change, call any listeners, then check for another change
+          options.success = function(resp) {
+            timeout = 100;
+            if (active) {
+              since = resp.last_seq;
+              triggerListeners(resp);
+              getChangesSince();
+            };
+          };
+          options.error = function() {
+            if (active) {
+              setTimeout(getChangesSince, timeout);
+              timeout = timeout * 2;
+            }
+          };
+          // actually make the changes request
+          function getChangesSince() {
+            var opts = $.extend({heartbeat : 10 * 1000}, options, {
+              feed : "longpoll",
+              since : since
+            });
+            ajax(
+              {url: db.uri + "_changes"+encodeOptions(opts)},
+              options,
+              "Error connecting to "+db.uri+"/_changes."
+            );
+          }
+          // start the first request
+          if (since) {
+            getChangesSince();
+          } else {
+            db.info({
+              success : function(info) {
+                since = info.update_seq;
+                getChangesSince();
+              }
+            });
+          }
+          return promise;
+        },
+        allDocs: function(options) {
+          var type = "GET";
+          var data = null;
+          if (options["keys"]) {
+            type = "POST";
+            var keys = options["keys"];
+            delete options["keys"];
+            data = toJSON({ "keys": keys });
+          }
+          ajax({
+              type: type,
+              data: data,
+              url: this.uri + "_all_docs" + encodeOptions(options)
+            },
+            options,
+            "An error occurred retrieving a list of all documents"
+          );
+        },
+        allDesignDocs: function(options) {
+          this.allDocs($.extend({startkey:"_design", endkey:"_design0"}, options));
+        },
+        allApps: function(options) {
+          options = options || {};
+          var self = this;
+          if (options.eachApp) {
+            this.allDesignDocs({
+              success: function(resp) {
+                $.each(resp.rows, function() {
+                  self.openDoc(this.id, {
+                    success: function(ddoc) {
+                      var index, appPath, appName = ddoc._id.split('/');
+                      appName.shift();
+                      appName = appName.join('/');
+                      index = ddoc.couchapp && ddoc.couchapp.index;
+                      if (index) {
+                        appPath = ['', name, ddoc._id, index].join('/');
+                      } else if (ddoc._attachments && ddoc._attachments["index.html"]) {
+                        appPath = ['', name, ddoc._id, "index.html"].join('/');
+                      }
+                      if (appPath) options.eachApp(appName, appPath, ddoc);
+                    }
+                  });
+                });
+              }
+            });
+          } else {
+            alert("Please provide an eachApp function for allApps()");
+          }
+        },
+        openDoc: function(docId, options, ajaxOptions) {
+          options = options || {};
+          if (db_opts.attachPrevRev || options.attachPrevRev) {
+            $.extend(options, {
+              beforeSuccess : function(req, doc) {
+                rawDocs[doc._id] = {
+                  rev : doc._rev,
+                  raw : req.responseText
+                };
+              }
+            });
+          } else {
+            $.extend(options, {
+              beforeSuccess : function(req, doc) {
+                if (doc["jquery.couch.attachPrevRev"]) {
+                  rawDocs[doc._id] = {
+                    rev : doc._rev,
+                    raw : req.responseText
+                  };
+                }
+              }
+            });
+          }
+          ajax({url: this.uri + encodeDocId(docId) + encodeOptions(options)},
+            options,
+            "The document could not be retrieved",
+            ajaxOptions
+          );
+        },
+        saveDoc: function(doc, options) {
+          options = options || {};
+          var db = this;
+          var beforeSend = fullCommit(options);
+          if (doc._id === undefined) {
+            var method = "POST";
+            var uri = this.uri;
+          } else {
+            var method = "PUT";
+            var uri = this.uri + encodeDocId(doc._id);
+          }
+          var versioned = maybeApplyVersion(doc);
+          $.ajax({
+            type: method, url: uri + encodeOptions(options),
+            contentType: "application/json",
+            dataType: "json", data: toJSON(doc),
+            beforeSend : beforeSend,
+            complete: function(req) {
+              var resp = $.httpData(req, "json");
+              if (req.status == 200 || req.status == 201 || req.status == 202) {
+                doc._id = resp.id;
+                doc._rev = resp.rev;
+                if (versioned) {
+                  db.openDoc(doc._id, {
+                    attachPrevRev : true,
+                    success : function(d) {
+                      doc._attachments = d._attachments;
+                      if (options.success) options.success(resp);
+                    }
+                  });
+                } else {
+                  if (options.success) options.success(resp);
+                }
+              } else if (options.error) {
+                options.error(req.status, resp.error, resp.reason);
+              } else {
+                alert("The document could not be saved: " + resp.reason);
+              }
+            }
+          });
+        },
+        bulkSave: function(docs, options) {
+          var beforeSend = fullCommit(options);
+          $.extend(options, {successStatus: 201, beforeSend : beforeSend});
+          ajax({
+              type: "POST",
+              url: this.uri + "_bulk_docs" + encodeOptions(options),
+              contentType: "application/json", data: toJSON(docs)
+            },
+            options,
+            "The documents could not be saved"
+          );
+        },
+        removeDoc: function(doc, options) {
+          ajax({
+              type: "DELETE",
+              url: this.uri +
+                   encodeDocId(doc._id) +
+                   encodeOptions({rev: doc._rev})
+            },
+            options,
+            "The document could not be deleted"
+          );
+        },
+        bulkRemove: function(docs, options){
+          docs.docs = $.each(
+            docs.docs, function(i, doc){
+              doc._deleted = true;
+            }
+          );
+          $.extend(options, {successStatus: 201});
+          ajax({
+              type: "POST",
+              url: this.uri + "_bulk_docs" + encodeOptions(options),
+              data: toJSON(docs)
+            },
+            options,
+            "The documents could not be deleted"
+          );
+        },
+        copyDoc: function(docId, options, ajaxOptions) {
+          ajaxOptions = $.extend(ajaxOptions, {
+            complete: function(req) {
+              var resp = $.httpData(req, "json");
+              if (req.status == 201) {
+                if (options.success) options.success(resp);
+              } else if (options.error) {
+                options.error(req.status, resp.error, resp.reason);
+              } else {
+                alert("The document could not be copied: " + resp.reason);
+              }
+            }
+          });
+          ajax({
+              type: "COPY",
+              url: this.uri + encodeDocId(docId)
+            },
+            options,
+            "The document could not be copied",
+            ajaxOptions
+          );
+        },
+        query: function(mapFun, reduceFun, language, options) {
+          language = language || "javascript";
+          if (typeof(mapFun) !== "string") {
+            mapFun = mapFun.toSource ? mapFun.toSource() : "(" + mapFun.toString() + ")";
+          }
+          var body = {language: language, map: mapFun};
+          if (reduceFun != null) {
+            if (typeof(reduceFun) !== "string")
+              reduceFun = reduceFun.toSource ? reduceFun.toSource() : "(" + reduceFun.toString() + ")";
+            body.reduce = reduceFun;
+          }
+          ajax({
+              type: "POST",
+              url: this.uri + "_temp_view" + encodeOptions(options),
+              contentType: "application/json", data: toJSON(body)
+            },
+            options,
+            "An error occurred querying the database"
+          );
+        },
+        list: function(list, view, options) {
+          var list = list.split('/');
+          var options = options || {};
+          var type = 'GET';
+          var data = null;
+          if (options['keys']) {
+            type = 'POST';
+            var keys = options['keys'];
+            delete options['keys'];
+            data = toJSON({'keys': keys });
+          }
+          ajax({
+              type: type,
+              data: data,
+              url: this.uri + '_design/' + list[0] +
+                   '/_list/' + list[1] + '/' + view + encodeOptions(options)
+              },
+              options, 'An error occured accessing the list'
+          );
+        },
+        view: function(name, options) {
+          var name = name.split('/');
+          var options = options || {};
+          var type = "GET";
+          var data= null;
+          if (options["keys"]) {
+            type = "POST";
+            var keys = options["keys"];
+            delete options["keys"];
+            data = toJSON({ "keys": keys });
+          }
+          ajax({
+              type: type,
+              data: data,
+              url: this.uri + "_design/" + name[0] +
+                   "/_view/" + name[1] + encodeOptions(options)
+            },
+            options, "An error occurred accessing the view"
+          );
+        },
+        getDbProperty: function(propName, options, ajaxOptions) {
+          ajax({url: this.uri + propName + encodeOptions(options)},
+            options,
+            "The property could not be retrieved",
+            ajaxOptions
+          );
+        },
+
+        setDbProperty: function(propName, propValue, options, ajaxOptions) {
+          ajax({
+            type: "PUT", 
+            url: this.uri + propName + encodeOptions(options),
+            data : JSON.stringify(propValue)
+          },
+            options,
+            "The property could not be updated",
+            ajaxOptions
+          );
+        }
+      };
+    },
+
+    encodeDocId: encodeDocId, 
+
+    info: function(options) {
+      ajax(
+        {url: this.urlPrefix + "/"},
+        options,
+        "Server information could not be retrieved"
+      );
+    },
+
+    replicate: function(source, target, ajaxOptions, repOpts) {
+      repOpts = $.extend({source: source, target: target}, repOpts);
+      if (repOpts.continuous) {
+        ajaxOptions.successStatus = 202;
+      }
+      ajax({
+          type: "POST", url: this.urlPrefix + "/_replicate",
+          data: JSON.stringify(repOpts),
+          contentType: "application/json"
+        },
+        ajaxOptions,
+        "Replication failed"
+      );
+    },
+
+    newUUID: function(cacheNum) {
+      if (cacheNum === undefined) {
+        cacheNum = 1;
+      }
+      if (!uuidCache.length) {
+        ajax({url: this.urlPrefix + "/_uuids", data: {count: cacheNum}, async: false}, {
+            success: function(resp) {
+              uuidCache = resp.uuids
+            }
+          },
+          "Failed to retrieve UUID batch."
+        );
+      }
+      return uuidCache.shift();
+    }
+  });
+
+  function ajax(obj, options, errorMessage, ajaxOptions) {
+    options = $.extend({successStatus: 200}, options);
+    ajaxOptions = $.extend({contentType: "application/json"}, ajaxOptions);
+    errorMessage = errorMessage || "Unknown error";
+    $.ajax($.extend($.extend({
+      type: "GET", dataType: "json", cache : !$.browser.msie,
+      beforeSend: function(xhr){
+        if(ajaxOptions && ajaxOptions.headers){
+          for (var header in ajaxOptions.headers){
+            xhr.setRequestHeader(header, ajaxOptions.headers[header]);
+          }
+        }
+      },
+      complete: function(req) {
+        try {
+          var resp = $.httpData(req, "json");
+        } catch(e) {
+          if (options.error) {
+            options.error(req.status, req, e);
+          } else {
+            alert(errorMessage + ": " + e);
+          }
+          return;
+        }
+        if (options.ajaxStart) {
+          options.ajaxStart(resp);
+        }
+        if (req.status == options.successStatus) {
+          if (options.beforeSuccess) options.beforeSuccess(req, resp);
+          if (options.success) options.success(resp);
+        } else if (options.error) {
+          options.error(req.status, resp && resp.error || errorMessage, resp && resp.reason || "no response");
+        } else {
+          alert(errorMessage + ": " + resp.reason);
+        }
+      }
+    }, obj), ajaxOptions));
+  }
+
+  function fullCommit(options) {
+    var options = options || {};
+    if (typeof options.ensure_full_commit !== "undefined") {
+      var commit = options.ensure_full_commit;
+      delete options.ensure_full_commit;
+      return function(xhr) {
+        xhr.setRequestHeader("X-Couch-Full-Commit", commit.toString());
+      };
+    }
+  };
+
+  // Convert a options object to an url query string.
+  // ex: {key:'value',key2:'value2'} becomes '?key="value"&key2="value2"'
+  function encodeOptions(options) {
+    var buf = [];
+    if (typeof(options) === "object" && options !== null) {
+      for (var name in options) {
+        if ($.inArray(name, ["error", "success", "beforeSuccess", "ajaxStart"]) >= 0)
+          continue;
+        var value = options[name];
+        if ($.inArray(name, ["key", "startkey", "endkey"]) >= 0) {
+          value = toJSON(value);
+        }
+        buf.push(encodeURIComponent(name) + "=" + encodeURIComponent(value));
+      }
+    }
+    return buf.length ? "?" + buf.join("&") : "";
+  }
+
+  function toJSON(obj) {
+    return obj !== null ? JSON.stringify(obj) : null;
+  }
+
+})(jQuery);
+
 // name: sammy
-// version: 0.6.0pre
+// version: 0.6.1pre
 
 (function($) {
 
@@ -6774,7 +7168,7 @@ window.jQuery = window.$ = jQuery;
     if (args.length === 0 || args[0] && _isFunction(args[0])) { // Sammy()
       return Sammy.apply(Sammy, ['body'].concat(args));
     } else if (typeof (selector = args.shift()) == 'string') { // Sammy('#main')
-      app = Sammy.apps[selector] || new Sammy.Application(args.shift());
+      app = Sammy.apps[selector] || new Sammy.Application();
       app.element_selector = selector;
       if (args.length > 0) {
         $.each(args, function(i, plugin) {
@@ -6790,7 +7184,7 @@ window.jQuery = window.$ = jQuery;
     }
   };
 
-  Sammy.VERSION = '0.6.0pre';
+  Sammy.VERSION = '0.6.1pre';
 
   // Add to the global logger pool. Takes a function that accepts an
   // unknown number of arguments and should print them or send them somewhere
@@ -7837,6 +8231,11 @@ window.jQuery = window.$ = jQuery;
       }
     },
 
+    // clear the templateCache
+    clearTemplateCache: function() {
+      return _template_cache = {};
+    },
+
     // This thows a '404 Not Found' error by invoking `error()`.
     // Override this method or `error()` to provide custom
     // 404 behavior (i.e redirecting to / or showing a warning)
@@ -7876,12 +8275,20 @@ window.jQuery = window.$ = jQuery;
       return returned;
     },
 
+    _getFormVerb: function(form) {
+      var $form = $(form), verb;
+      $_method = $form.find('input[name="_method"]');
+      if ($_method.length > 0) { verb = $_method.val(); }
+      if (!verb) { verb = $form[0].getAttribute('method'); }
+      return $.trim(verb.toString().toLowerCase());
+    },
+
     _checkFormSubmission: function(form) {
       var $form, path, verb, params, returned;
       this.trigger('check-form-submission', {form: form});
       $form = $(form);
       path  = $form.attr('action');
-      verb  = $.trim($form.attr('method').toString().toLowerCase());
+      verb  = this._getFormVerb($form);
       if (!verb || verb == '') { verb = 'get'; }
       this.log('_checkFormSubmission', $form, path, verb);
       if (verb === 'get') {
@@ -8076,7 +8483,7 @@ window.jQuery = window.$ = jQuery;
     load: function(location, options, callback) {
       var context = this;
       return this.then(function() {
-        var should_cache, cached;
+        var should_cache, cached, is_json;
         if (_isFunction(options)) {
           callback = options;
           options = {};
@@ -8086,8 +8493,10 @@ window.jQuery = window.$ = jQuery;
         if (callback) { this.then(callback); }
         if (typeof location === 'string') {
           // its a path
-          should_cache = !(options.cache === false);
+          is_json      = (location.match(/\.json$/) || options.json);
+          should_cache = ((is_json && options.cache === true) || options.cache !== false);
           delete options.cache;
+          delete options.json;
           if (options.engine) {
             context.next_engine = options.engine;
             delete options.engine;
@@ -8099,6 +8508,7 @@ window.jQuery = window.$ = jQuery;
           $.ajax($.extend({
             url: location,
             data: {},
+            dataType: is_json ? 'json' : null,
             type: 'get',
             success: function(data) {
               if (should_cache) {
@@ -8138,7 +8548,10 @@ window.jQuery = window.$ = jQuery;
       if (_isFunction(location) && !data) {
         return this.then(location);
       } else {
-        return this.load(location).interpolate(data, location).then(callback);
+        if (!data && this.content) { data = this.content; }
+        return this.load(location)
+                   .interpolate(data, location)
+                   .then(callback);
       }
     },
 
@@ -8149,6 +8562,10 @@ window.jQuery = window.$ = jQuery;
     collect: function(array, callback) {
       var context = this;
       return this.then(function() {
+        if (_isFunction(array)) {
+          callback = array;
+          array = this.content;
+        }
         var contents = "";
         $.each(array, function(i, item) {
           var returned = callback.apply(context, [i, item]);
@@ -8167,6 +8584,9 @@ window.jQuery = window.$ = jQuery;
         data = name;
         name = null;
       }
+      if (!data && _isArray(this.content)) {
+        data = this.content;
+      }
       return this.load(location).collect(data, function(i, value) {
         var idata = {};
         name ? (idata[name] = value) : (idata = value);
@@ -8182,6 +8602,7 @@ window.jQuery = window.$ = jQuery;
     interpolate: function(data, engine, retain) {
       var context = this;
       return this.then(function(content, prev) {
+        if (!data && prev) { data = prev; }
         if (this.next_engine) {
           engine = this.next_engine;
           this.next_engine = false;
@@ -8195,14 +8616,21 @@ window.jQuery = window.$ = jQuery;
     swap: function() {
       return this.then(function(content) {
         this.event_context.swap(content);
-      });
+      }).trigger('changed', {});
     },
 
     // Same usage as `jQuery.fn.appendTo()` but uses `then()` to ensure order
     appendTo: function(selector) {
       return this.then(function(content) {
         $(selector).append(content);
-      });
+      }).trigger('changed', {});
+    },
+
+    // Same usage as `jQuery.fn.prependTo()` but uses `then()` to ensure order
+    prependTo: function(selector) {
+      return this.then(function(content) {
+        $(selector).prepend(content);
+      }).trigger('changed', {});
     },
 
     // Replaces the `$(selector)` using `html()` with the previously loaded
@@ -8210,6 +8638,16 @@ window.jQuery = window.$ = jQuery;
     replace: function(selector) {
       return this.then(function(content) {
         $(selector).html(content);
+      }).trigger('changed', {});
+    },
+
+    // trigger the event in the order of the event context. Same semantics
+    // as `Sammy.EventContext#trigger()`. If data is ommitted, `content`
+    // is sent as `{content: content}`
+    trigger: function(name, data) {
+      return this.then(function(content) {
+        if (typeof data == 'undefined') { data = {content: content}; }
+        this.event_context.trigger(name, data);
       });
     }
 
@@ -8375,6 +8813,12 @@ window.jQuery = window.$ = jQuery;
       return this.app.notFound(this.verb, this.path);
     },
 
+    // Default JSON parsing uses jQuery's `parseJSON()`. Include `Sammy.JSON`
+    // plugin for the more conformant "crockford special".
+    json: function(string) {
+      return $.parseJSON(string);
+    },
+
     // //=> Sammy.EventContext: get #/ {}
     toString: function() {
       return "Sammy.EventContext: " + [this.verb, this.path, this.params].join(' ');
@@ -8389,6 +8833,369 @@ window.jQuery = window.$ = jQuery;
 
 (function($) {
 
+  // json2.js - only included if native json does not exist
+  // http://www.json.org/js.html
+  if (!window.JSON) {
+    window.JSON = {};
+  }
+  (function () {
+
+      function f(n) {
+          // Format integers to have at least two digits.
+          return n < 10 ? '0' + n : n;
+      }
+
+      if (typeof Date.prototype.toJSON !== 'function') {
+
+          Date.prototype.toJSON = function (key) {
+
+              return this.getUTCFullYear()   + '-' +
+                   f(this.getUTCMonth() + 1) + '-' +
+                   f(this.getUTCDate())      + 'T' +
+                   f(this.getUTCHours())     + ':' +
+                   f(this.getUTCMinutes())   + ':' +
+                   f(this.getUTCSeconds())   + 'Z';
+          };
+
+          String.prototype.toJSON =
+          Number.prototype.toJSON =
+          Boolean.prototype.toJSON = function (key) {
+              return this.valueOf();
+          };
+      }
+
+      var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+          escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+          gap,
+          indent,
+          meta = {    // table of character substitutions
+              '\b': '\\b',
+              '\t': '\\t',
+              '\n': '\\n',
+              '\f': '\\f',
+              '\r': '\\r',
+              '"' : '\\"',
+              '\\': '\\\\'
+          },
+          rep;
+
+
+      function quote(string) {
+
+  // If the string contains no control characters, no quote characters, and no
+  // backslash characters, then we can safely slap some quotes around it.
+  // Otherwise we must also replace the offending characters with safe escape
+  // sequences.
+
+          escapable.lastIndex = 0;
+          return escapable.test(string) ?
+              '"' + string.replace(escapable, function (a) {
+                  var c = meta[a];
+                  return typeof c === 'string' ? c :
+                      '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+              }) + '"' :
+              '"' + string + '"';
+      }
+
+
+      function str(key, holder) {
+
+  // Produce a string from holder[key].
+
+          var i,          // The loop counter.
+              k,          // The member key.
+              v,          // The member value.
+              length,
+              mind = gap,
+              partial,
+              value = holder[key];
+
+  // If the value has a toJSON method, call it to obtain a replacement value.
+
+          if (value && typeof value === 'object' &&
+                  typeof value.toJSON === 'function') {
+              value = value.toJSON(key);
+          }
+
+  // If we were called with a replacer function, then call the replacer to
+  // obtain a replacement value.
+
+          if (typeof rep === 'function') {
+              value = rep.call(holder, key, value);
+          }
+
+  // What happens next depends on the value's type.
+
+          switch (typeof value) {
+          case 'string':
+              return quote(value);
+
+          case 'number':
+
+  // JSON numbers must be finite. Encode non-finite numbers as null.
+
+              return isFinite(value) ? String(value) : 'null';
+
+          case 'boolean':
+          case 'null':
+
+  // If the value is a boolean or null, convert it to a string. Note:
+  // typeof null does not produce 'null'. The case is included here in
+  // the remote chance that this gets fixed someday.
+
+              return String(value);
+
+  // If the type is 'object', we might be dealing with an object or an array or
+  // null.
+
+          case 'object':
+
+  // Due to a specification blunder in ECMAScript, typeof null is 'object',
+  // so watch out for that case.
+
+              if (!value) {
+                  return 'null';
+              }
+
+  // Make an array to hold the partial results of stringifying this object value.
+
+              gap += indent;
+              partial = [];
+
+  // Is the value an array?
+
+              if (Object.prototype.toString.apply(value) === '[object Array]') {
+
+  // The value is an array. Stringify every element. Use null as a placeholder
+  // for non-JSON values.
+
+                  length = value.length;
+                  for (i = 0; i < length; i += 1) {
+                      partial[i] = str(i, value) || 'null';
+                  }
+
+  // Join all of the elements together, separated with commas, and wrap them in
+  // brackets.
+
+                  v = partial.length === 0 ? '[]' :
+                      gap ? '[\n' + gap +
+                              partial.join(',\n' + gap) + '\n' +
+                                  mind + ']' :
+                            '[' + partial.join(',') + ']';
+                  gap = mind;
+                  return v;
+              }
+
+  // If the replacer is an array, use it to select the members to be stringified.
+
+              if (rep && typeof rep === 'object') {
+                  length = rep.length;
+                  for (i = 0; i < length; i += 1) {
+                      k = rep[i];
+                      if (typeof k === 'string') {
+                          v = str(k, value);
+                          if (v) {
+                              partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                          }
+                      }
+                  }
+              } else {
+
+  // Otherwise, iterate through all of the keys in the object.
+
+                  for (k in value) {
+                      if (Object.hasOwnProperty.call(value, k)) {
+                          v = str(k, value);
+                          if (v) {
+                              partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                          }
+                      }
+                  }
+              }
+
+  // Join all of the member texts together, separated with commas,
+  // and wrap them in braces.
+
+              v = partial.length === 0 ? '{}' :
+                  gap ? '{\n' + gap + partial.join(',\n' + gap) + '\n' +
+                          mind + '}' : '{' + partial.join(',') + '}';
+              gap = mind;
+              return v;
+          }
+      }
+
+  // If the JSON object does not yet have a stringify method, give it one.
+
+      if (typeof JSON.stringify !== 'function') {
+          JSON.stringify = function (value, replacer, space) {
+
+  // The stringify method takes a value and an optional replacer, and an optional
+  // space parameter, and returns a JSON text. The replacer can be a function
+  // that can replace values, or an array of strings that will select the keys.
+  // A default replacer method can be provided. Use of the space parameter can
+  // produce text that is more easily readable.
+
+              var i;
+              gap = '';
+              indent = '';
+
+  // If the space parameter is a number, make an indent string containing that
+  // many spaces.
+
+              if (typeof space === 'number') {
+                  for (i = 0; i < space; i += 1) {
+                      indent += ' ';
+                  }
+
+  // If the space parameter is a string, it will be used as the indent string.
+
+              } else if (typeof space === 'string') {
+                  indent = space;
+              }
+
+  // If there is a replacer, it must be a function or an array.
+  // Otherwise, throw an error.
+
+              rep = replacer;
+              if (replacer && typeof replacer !== 'function' &&
+                      (typeof replacer !== 'object' ||
+                       typeof replacer.length !== 'number')) {
+                  throw new Error('JSON.stringify');
+              }
+
+  // Make a fake root object containing our value under the key of ''.
+  // Return the result of stringifying the value.
+
+              return str('', {'': value});
+          };
+      }
+
+
+  // If the JSON object does not yet have a parse method, give it one.
+
+      if (typeof JSON.parse !== 'function') {
+          JSON.parse = function (text, reviver) {
+
+  // The parse method takes a text and an optional reviver function, and returns
+  // a JavaScript value if the text is a valid JSON text.
+
+              var j;
+
+              function walk(holder, key) {
+
+  // The walk method is used to recursively walk the resulting structure so
+  // that modifications can be made.
+
+                  var k, v, value = holder[key];
+                  if (value && typeof value === 'object') {
+                      for (k in value) {
+                          if (Object.hasOwnProperty.call(value, k)) {
+                              v = walk(value, k);
+                              if (v !== undefined) {
+                                  value[k] = v;
+                              } else {
+                                  delete value[k];
+                              }
+                          }
+                      }
+                  }
+                  return reviver.call(holder, key, value);
+              }
+
+
+  // Parsing happens in four stages. In the first stage, we replace certain
+  // Unicode characters with escape sequences. JavaScript handles many characters
+  // incorrectly, either silently deleting them, or treating them as line endings.
+
+              cx.lastIndex = 0;
+              if (cx.test(text)) {
+                  text = text.replace(cx, function (a) {
+                      return '\\u' +
+                          ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                  });
+              }
+
+  // In the second stage, we run the text against regular expressions that look
+  // for non-JSON patterns. We are especially concerned with '()' and 'new'
+  // because they can cause invocation, and '=' because it can cause mutation.
+  // But just to be safe, we want to reject all unexpected forms.
+
+  // We split the second stage into 4 regexp operations in order to work around
+  // crippling inefficiencies in IE's and Safari's regexp engines. First we
+  // replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
+  // replace all simple value tokens with ']' characters. Third, we delete all
+  // open brackets that follow a colon or comma or that begin the text. Finally,
+  // we look to see that the remaining characters are only whitespace or ']' or
+  // ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
+
+              if (/^[\],:{}\s]*$/.
+  test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@').
+  replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
+  replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+
+  // In the third stage we use the eval function to compile the text into a
+  // JavaScript structure. The '{' operator is subject to a syntactic ambiguity
+  // in JavaScript: it can begin a block or an object literal. We wrap the text
+  // in parens to eliminate the ambiguity.
+
+                  j = eval('(' + text + ')');
+
+  // In the optional fourth stage, we recursively walk the new structure, passing
+  // each name/value pair to a reviver function for possible transformation.
+
+                  return typeof reviver === 'function' ?
+                      walk({'': j}, '') : j;
+              }
+
+  // If the text is not JSON parseable, then a SyntaxError is thrown.
+
+              throw new SyntaxError('JSON.parse');
+          };
+      }
+  }());
+
+  Sammy = Sammy || {};
+
+  // Sammy.JSON is a simple wrapper around Douglas Crockford's ever-useful json2.js
+  // (http://www.json.org/js.html]) Sammy.JSON includes the top level JSON object if
+  // it doesn't already exist (a.k.a. does not override the native implementation that
+  // some browsers include). It also adds a <tt>json()</tt> helper to a Sammy app when
+  // included.
+  Sammy.JSON = function(app) {
+
+    app.helpers({
+      // json is a polymorphic function that translates objects aback and forth
+      // from JSON to JS. If given a string, it will parse into JS, if given a JS
+      // object it will stringify into JSON.
+      //
+      // ### Example
+      //
+      //      var app = $.sammy(function() {
+      //        this.use(Sammy.JSON);
+      //
+      //        this.get('#/', function() {
+      //          this.json({user_id: 123}); //=> "{\"user_id\":\"123\"}"
+      //          this.json("{\"user_id\":\"123\"}"); //=> [object Object]
+      //          this.json("{\"user_id\":\"123\"}").user_id; //=> "123"
+      //        });
+      //      })
+      //
+      //
+      json: function(object) {
+        if (typeof object == 'string') {
+          return JSON.parse(object);
+        } else {
+          return JSON.stringify(object);
+        }
+      }
+    });
+
+  }
+
+})(jQuery);
+
+(function($) {
+
   Sammy = Sammy || {};
 
   // Sammy.Store is an abstract adapter class that wraps the multitude of in
@@ -8398,7 +9205,7 @@ window.jQuery = window.$ = jQuery;
   // stored strings.
   //
   // Sammy.Store can be used directly, but within a Sammy.Application it is much
-  // easier to use the <tt>Sammy.Storage</tt> plugin and its helper methods.
+  // easier to use the `Sammy.Storage` plugin and its helper methods.
   //
   // Sammy.Store also supports the KVO pattern, by firing DOM/jQuery Events when
   // a key is set.
@@ -8472,12 +9279,12 @@ window.jQuery = window.$ = jQuery;
         true;
       }
     },
-    // Checks for the existance of <tt>key</tt> in the current store. Returns a boolean.
+    // Checks for the existance of `key` in the current store. Returns a boolean.
     exists: function(key) {
       return this.storage.exists(key);
     },
-    // Sets the value of <tt>key<tt> with <tt>value</tt>. If <tt>value<tt> is an
-    // object, it is turned to and stored as a string with <tt>JSON.stringify</tt>.
+    // Sets the value of `key` with `value`. If `value` is an
+    // object, it is turned to and stored as a string with `JSON.stringify`.
     // It also tries to conform to the KVO pattern triggering jQuery events on the
     // element that the store is bound to.
     //
@@ -8501,7 +9308,7 @@ window.jQuery = window.$ = jQuery;
       // always return the original value
       return value;
     },
-    // Returns the set value at <tt>key</tt>, parsing with <tt>JSON.parse</tt> and
+    // Returns the set value at `key`, parsing with `JSON.parse` and
     // turning into an object if possible
     get: function(key) {
       var value = this.storage.get(key);
@@ -8514,7 +9321,7 @@ window.jQuery = window.$ = jQuery;
         return value;
       }
     },
-    // Removes the value at <tt>key</tt> from the current store
+    // Removes the value at `key` from the current store
     clear: function(key) {
       this._removeKey(key);
       return this.storage.clear(key);
@@ -8587,7 +9394,7 @@ window.jQuery = window.$ = jQuery;
       });
       return found;
     },
-    // Returns the value at <tt>key</tt> if set, otherwise, runs the callback
+    // Returns the value at `key` if set, otherwise, runs the callback
     // and sets the value to the value returned in the callback.
     //
     // ### Example
@@ -8609,7 +9416,7 @@ window.jQuery = window.$ = jQuery;
         return this.get(key);
       }
     },
-    // loads the response of a request to <tt>path</tt> into <tt>key</tt>.
+    // loads the response of a request to `path` into `key`.
     //
     // ### Example
     //
@@ -8693,7 +9500,7 @@ window.jQuery = window.$ = jQuery;
   $.extend(Sammy.Store.Data.prototype, {
     isAvailable: function() { return true; },
     exists: function(key) {
-      return (typeof this.$element.data(this._key(key)) != "undefined");
+      return !!this.$element.data(this._key(key));
     },
     set: function(key, value) {
       return this.$element.data(this._key(key), value);
@@ -8749,7 +9556,7 @@ window.jQuery = window.$ = jQuery;
   // SessionStorage is only persistant through the current 'session' which is defined
   // as the length that the current window is open. This means that data will survive
   // refreshes but not close/open or multiple windows/tabs. For more info, check out
-  // the <tt>LocalStorage</tt> documentation and links.
+  // the `LocalStorage` documentation and links.
   Sammy.Store.SessionStorage = function(name, element) {
     this.name = name;
     this.element = element;
@@ -8840,16 +9647,16 @@ window.jQuery = window.$ = jQuery;
   });
 
   // Sammy.Storage is a plugin that provides shortcuts for creating and using
-  // Sammy.Store objects. Once included it provides the <tt>store()</tt> app level
+  // Sammy.Store objects. Once included it provides the `store()` app level
   // and helper methods. Depends on Sammy.JSON (or json2.js).
   Sammy.Storage = function(app) {
     this.use(Sammy.JSON);
 
     this.stores = this.stores || {};
 
-    // <tt>store()</tt> creates and looks up existing <tt>Sammy.Store</tt> objects
-    // for the current application. The first time used for a given <tt>'name'</tt>
-    // initializes a <tt>Sammy.Store</tt> and also creates a helper under the store's
+    // `store()` creates and looks up existing `Sammy.Store` objects
+    // for the current application. The first time used for a given `'name'`
+    // initializes a `Sammy.Store` and also creates a helper under the store's
     // name.
     //
     // ### Example
@@ -8933,13 +9740,13 @@ window.jQuery = window.$ = jQuery;
   };
 
   // Sammy.Session is an additional plugin for creating a common 'session' store
-  // for the given app. It is a very simple wrapper around <tt>Sammy.Storage</tt>
+  // for the given app. It is a very simple wrapper around `Sammy.Storage`
   // that provides a simple fallback mechanism for trying to provide the best
-  // possible storage type for the session. This means, <tt>LocalStorage</tt>
-  // if available, otherwise <tt>Cookie</tt>, otherwise <tt>Memory</tt>.
-  // It provides the <tt>session()</tt> helper through <tt>Sammy.Storage#store()</tt>.
+  // possible storage type for the session. This means, `LocalStorage`
+  // if available, otherwise `Cookie`, otherwise `Memory`.
+  // It provides the `session()` helper through `Sammy.Storage#store()`.
   //
-  // See the <tt>Sammy.Storage</tt> plugin for full documentation.
+  // See the `Sammy.Storage` plugin for full documentation.
   //
   Sammy.Session = function(app, options) {
     this.use(Sammy.Storage);
@@ -8948,13 +9755,13 @@ window.jQuery = window.$ = jQuery;
   };
 
   // Sammy.Cache provides helpers for caching data within the lifecycle of a
-  // Sammy app. The plugin provides two main methods on <tt>Sammy.Application<tt>,
-  // <tt>cache</tt> and <tt>clearCache</tt>. Each app has its own cache store so that
+  // Sammy app. The plugin provides two main methods on `Sammy.Application`,
+  // `cache` and `clearCache`. Each app has its own cache store so that
   // you dont have to worry about collisions. As of 0.5 the original Sammy.Cache module
   // has been deprecated in favor of this one based on Sammy.Storage. The exposed
   // API is almost identical, but Sammy.Storage provides additional backends including
-  // HTML5 Storage. <tt>Sammy.Cache</tt> will try to use these backends when available
-  // (in this order) <tt>LocalStorage</tt>, <tt>SessionStorage</tt>, and <tt>Memory</tt>
+  // HTML5 Storage. `Sammy.Cache` will try to use these backends when available
+  // (in this order) `LocalStorage`, `SessionStorage`, and `Memory`
   Sammy.Cache = function(app, options) {
     this.use(Sammy.Storage);
     // set cache_partials to true
@@ -9109,6 +9916,26 @@ window.jQuery = window.$ = jQuery;
 (function($) {
   
   $.sammy('#container', function() {
+    this.use('JSON')
+        .use('Meld')
+        .use('Storage');
+    
+    var showLoading = function() {
+      $('#loading').show();
+    };
+    
+    var hideLoading = function() {
+      $('#loading').hide();
+    };
+    
+    this.bind('run', function() {
+      showLoading();
+    });
+    
+    this.get('#/', function(context) {
+      this.load('#action-index')
+          .swap();
+    });
     
   });
   
