@@ -26,7 +26,7 @@
           return {
             type: type,
             updated_at: timestamp()
-          }
+          };
         },
         errorHandler: function(response) {
           app.trigger('error.' + type, {error: response});
@@ -38,7 +38,7 @@
         if ($.isFunction(callback)) {
           return $.extend(base, {success: callback});
         } else {
-          return $.extend(base, callback || {})
+          return $.extend(base, callback || {});
         }
       };
 
@@ -51,11 +51,21 @@
         extend: function(obj) {
           $.extend(this, obj);
         },
+
         all: function(callback) {
           return app.db.allDocs($.extend(mergeCallbacks(callback), {
             include_docs: true
           }));
         },
+
+        get: function(id, options, callback) {
+          if ($.isFunction(options)) {
+            callback = options;
+            options  = {};
+          }
+          return app.db.openDoc(id, $.extend(mergeCallbacks(callback), options));
+        },
+
         view: function(name, options, callback) {
           if ($.isFunction(options)) {
             callback = options;
@@ -63,6 +73,7 @@
           }
           return app.db.view([dbname, name].join('/'), $.extend(mergeCallbacks(callback), options));
         },
+
         viewDocs: function(name, options, callback) {
           if ($.isFunction(options)) {
             callback = options;
@@ -76,19 +87,20 @@
             callback(docs);
           };
           options = $.extend({
-            include_docs: true,
+            include_docs: true
           }, mergeCallbacks(wrapped_callback), options);
           return app.db.view([dbname, name].join('/'), options);
         },
+
         create: function(doc, callback) {
           return app.db.saveDoc(mergeDefaultDocument(doc), mergeCallbacks(callback));
         }
-      }
+      };
     };
 
     this.helpers({
       db: db()
-    })
+    });
   };
 
 })(jQuery, window.Sammy);

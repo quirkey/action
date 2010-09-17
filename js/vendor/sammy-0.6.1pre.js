@@ -1449,7 +1449,7 @@
 
     // defers the call of function to occur in order of the render queue.
     // The function can accept any number of arguments as long as the last
-    // argument is a callback function. This is us.eful for putting arbitrary
+    // argument is a callback function. This is useful for putting arbitrary
     // asynchronous functions into the queue. The content passed to the
     // callback is passed as `content` to the next item in the queue.
     //
@@ -1487,18 +1487,19 @@
           callback = array;
           array = this.content;
         }
-        var contents = [];
+        var contents = [], doms = false;
         $.each(array, function(i, item) {
           Sammy.log(array, i, item);
           var returned = callback.apply(context, [i, item]);
           if (returned.jquery && returned.length == 1) {
             returned = returned[0];
+            doms = true;
           }
           contents.push(returned);
           Sammy.log('contents', contents, 'returned', returned);
           return returned;
         });
-        return contents;
+        return doms ? contents : contents.join('');
       };
       return now ? coll() : this.then(coll);
     },

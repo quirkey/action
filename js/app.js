@@ -36,14 +36,7 @@
             startkey: ["action",null],
             endkey: ["action", "a"]
           })
-          .then(function(docs) {
-            // this.next(this.event_context.meld($('#action-template'), docs[0]))
-            this.next(docs);
-          })
           .renderEach($('#action-template'), 'action')
-          .then(function(content) {
-            Sammy.log('finished content', content);
-          })
           .appendTo('#actions')
           .then(hideLoading);
     });
@@ -51,7 +44,18 @@
     this.post('#/action', function(ctx) {
       Action.create(this.params['action'], function(response) {
         ctx.log(response);
+        ctx.trigger('add-action', {id: response['id']});
       });
+    });
+
+    this.bind('add-action', function(e, data) {
+      this.log('add-action', 'params', this.params, 'data', data);
+      this.send(Action.get, data['id'])
+          .then(function(content) {
+            this.next({action: content});
+          })
+          .render($('#action-template'))
+          .prependTo('#actions');
     });
 
   }).run('#/');
