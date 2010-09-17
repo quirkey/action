@@ -33,8 +33,9 @@
       this.load($('#action-index'))
           .replace('#main')
           .send(Action.viewDocs, 'by_type', {
-            startkey: ["action",null],
-            endkey: ["action", "a"]
+            startkey: ["action", "a"],
+            endkey: ["action", null],
+            descending: true
           })
           .renderEach($('#action-template'), 'action')
           .appendTo('#actions')
