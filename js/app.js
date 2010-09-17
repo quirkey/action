@@ -15,13 +15,28 @@
       $('#loading').hide();
     };
 
-    var Action = this.createModel('action');
+    Action = this.createModel('action');
     Action.extend({
-      parse: function(doc) {
-
+      tokens: {
+        before_subject: ['for','about','to','with']
+      },
+      parse: function(content) {
+        var parsed = {};
+        content = $.trim(content.toString()); // ensure string
+        tokens = content.split(/\s/g);
+        parsed['verb'] = tokens.shift();
+        // iterate through the tokens
+        for (var i=0; i < tokens.length; i++) {
+          if ($.inArray(tokens[i], this.tokens.before_subject) != -1) {
+            parsed['subject'] = tokens[i + 1];
+          }
+        }
+        return parsed;
       },
       beforeSave: function(doc) {
-
+        doc.parsed = this.parse(doc.content);
+        Sammy.log('doc.parsed', doc.parsed);
+        return doc;
       }
     });
 

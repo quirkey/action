@@ -1489,14 +1489,12 @@
         }
         var contents = [], doms = false;
         $.each(array, function(i, item) {
-          Sammy.log(array, i, item);
           var returned = callback.apply(context, [i, item]);
           if (returned.jquery && returned.length == 1) {
             returned = returned[0];
             doms = true;
           }
           contents.push(returned);
-          Sammy.log('contents', contents, 'returned', returned);
           return returned;
         });
         return doms ? contents : contents.join('');
@@ -1520,7 +1518,6 @@
           return this.collect(data, function(i, value) {
             var idata = {}, engine = this.next_engine || location;
             name ? (idata[name] = value) : (idata = value);
-            Sammy.log('collect', content, name, idata, engine);
             return this.event_context.interpolate(content, idata, engine);
           }, true);
       });

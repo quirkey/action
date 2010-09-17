@@ -48,6 +48,7 @@
 
       return {
         timestamp: timestamp,
+
         extend: function(obj) {
           $.extend(this, obj);
         },
@@ -93,7 +94,14 @@
         },
 
         create: function(doc, callback) {
-          return app.db.saveDoc(mergeDefaultDocument(doc), mergeCallbacks(callback));
+          return this.save(mergeDefaultDocument(doc), callback);
+        },
+
+        save: function(doc, callback) {
+          if ($.isFunction(this.beforeSave)) {
+            doc = this.beforeSave(doc);
+          }
+          return app.db.saveDoc(doc, mergeCallbacks(callback));
         }
       };
     };

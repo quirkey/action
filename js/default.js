@@ -8602,14 +8602,12 @@ window.jQuery = window.$ = jQuery;
         }
         var contents = [], doms = false;
         $.each(array, function(i, item) {
-          Sammy.log(array, i, item);
           var returned = callback.apply(context, [i, item]);
           if (returned.jquery && returned.length == 1) {
             returned = returned[0];
             doms = true;
           }
           contents.push(returned);
-          Sammy.log('contents', contents, 'returned', returned);
           return returned;
         });
         return doms ? contents : contents.join('');
@@ -8633,7 +8631,6 @@ window.jQuery = window.$ = jQuery;
           return this.collect(data, function(i, value) {
             var idata = {}, engine = this.next_engine || location;
             name ? (idata[name] = value) : (idata = value);
-            Sammy.log('collect', content, name, idata, engine);
             return this.event_context.interpolate(content, idata, engine);
           }, true);
       });
@@ -10134,6 +10131,7 @@ window.jQuery = window.$ = jQuery;
 
       return {
         timestamp: timestamp,
+
         extend: function(obj) {
           $.extend(this, obj);
         },
@@ -10179,7 +10177,14 @@ window.jQuery = window.$ = jQuery;
         },
 
         create: function(doc, callback) {
-          return app.db.saveDoc(mergeDefaultDocument(doc), mergeCallbacks(callback));
+          return this.save(mergeDefaultDocument(doc), callback);
+        },
+
+        save: function(doc, callback) {
+          if ($.isFunction(this.beforeSave)) {
+            doc = this.beforeSave(doc);
+          }
+          return app.db.saveDoc(doc, mergeCallbacks(callback));
         }
       };
     };
@@ -10208,13 +10213,28 @@ window.jQuery = window.$ = jQuery;
       $('#loading').hide();
     };
 
-    var Action = this.createModel('action');
+    Action = this.createModel('action');
     Action.extend({
-      parse: function(doc) {
-
+      tokens: {
+        before_subject: ['for','about','to','with']
+      },
+      parse: function(content) {
+        var parsed = {};
+        content = $.trim(content.toString()); // ensure string
+        tokens = content.split(/\s/g);
+        parsed['verb'] = tokens.shift();
+        // iterate through the tokens
+        for (var i=0; i < tokens.length; i++) {
+          if ($.inArray(tokens[i], this.tokens.before_subject) != -1) {
+            parsed['subject'] = tokens[i + 1];
+          }
+        }
+        return parsed;
       },
       beforeSave: function(doc) {
-
+        doc.parsed = this.parse(doc.content);
+        Sammy.log('doc.parsed', doc.parsed);
+        return doc;
       }
     });
 
