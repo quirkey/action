@@ -32,21 +32,20 @@
     this.get('#/', function(ctx) {
       this.load($('#action-index'))
           .replace('#main')
-          .then(function() {
-            var rctx = this;
-            rctx.wait();
-            Action.all(function(docs) {
-              Sammy.log(docs, rctx.waiting);
-              rctx.content = docs;
-              rctx.next();
-            });
-            return false;
+          .send(Action.viewDocs, 'by_type', {
+            startkey: ["action",null],
+            endkey: ["action", "a"]
           })
+          .then(function(docs) {
+            // this.next(this.event_context.meld($('#action-template'), docs[0]))
+            this.next(docs);
+          })
+          .renderEach($('#action-template'), 'action')
           .then(function(content) {
-            ctx.log('should wait', content);
+            Sammy.log('finished content', content);
           })
+          .appendTo('#actions')
           .then(hideLoading);
-
     });
 
     this.post('#/action', function(ctx) {

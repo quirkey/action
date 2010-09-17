@@ -469,7 +469,7 @@
     //    of a method on the application.
     //
     route: function(verb, path, callback) {
-      var app = this, param_names = [], add_route;
+      var app = this, param_names = [], add_route, path_match;
 
       // if the method signature is just (path, callback)
       // assume the verb is 'any'
@@ -1441,25 +1441,66 @@
       }
     },
 
+    // `render()` the the `location` with `data` and then `swap()` the
+    // app's `$element` with the rendered content.
+    partial: function(location, data) {
+      return this.render(location, data).swap();
+    },
+
+    // defers the call of function to occur in order of the render queue.
+    // The function can accept any number of arguments as long as the last
+    // argument is a callback function. This is us.eful for putting arbitrary
+    // asynchronous functions into the queue. The content passed to the
+    // callback is passed as `content` to the next item in the queue.
+    //
+    // === Example
+    //
+    //        this.send($.getJSON, '/app.json')
+    //            .then(function(json) {
+    //              $('#message).text(json['message']);
+    //            });
+    //
+    //
+    send: function() {
+      var context = this,
+          args = _makeArray(arguments),
+          fun  = args.shift();
+
+      if (_isArray(args[0])) { args = args[0]; }
+
+      return this.then(function(content) {
+        args.push(function(response) { context.next(response); });
+        context.wait();
+        fun.apply(fun, args);
+        return false;
+      });
+    },
+
     // itterates over an array, applying the callback for each item item. the
     // callback takes the same style of arguments as `jQuery.each()` (index, item).
     // The return value of each callback is collected as a single string and stored
     // as `content` to be used in the next iteration of the `RenderContext`.
-    collect: function(array, callback) {
+    collect: function(array, callback, now) {
       var context = this;
-      return this.then(function() {
+      var coll = function() {
         if (_isFunction(array)) {
           callback = array;
           array = this.content;
         }
-        var contents = "";
+        var contents = [];
         $.each(array, function(i, item) {
+          Sammy.log(array, i, item);
           var returned = callback.apply(context, [i, item]);
-          contents += returned;
+          if (returned.jquery && returned.length == 1) {
+            returned = returned[0];
+          }
+          contents.push(returned);
+          Sammy.log('contents', contents, 'returned', returned);
           return returned;
         });
         return contents;
-      });
+      };
+      return now ? coll() : this.then(coll);
     },
 
     // loads a template, and then interpolates it for each item in the `data`
@@ -1470,13 +1511,17 @@
         data = name;
         name = null;
       }
-      if (!data && _isArray(this.content)) {
-        data = this.content;
-      }
-      return this.load(location).collect(data, function(i, value) {
-        var idata = {};
-        name ? (idata[name] = value) : (idata = value);
-        return this.event_context.interpolate(this.content, idata, location);
+      return this.load(location).then(function(content) {
+          var rctx = this;
+          if (!data) {
+            data = _isArray(this.previous_content) ? this.previous_content : [];
+          }
+          return this.collect(data, function(i, value) {
+            var idata = {}, engine = this.next_engine || location;
+            name ? (idata[name] = value) : (idata = value);
+            Sammy.log('collect', content, name, idata, engine);
+            return this.event_context.interpolate(content, idata, engine);
+          }, true);
       });
     },
 
@@ -1647,7 +1692,14 @@
     // `render()` the the `location` with `data` and then `swap()` the
     // app's `$element` with the rendered content.
     partial: function(location, data) {
-      return this.render(location, data).swap();
+      return new Sammy.RenderContext(this).partial(location, data);
+    },
+
+    // create a new `Sammy.RenderContext` calling `send()` with an arbitrary
+    // function
+    send: function() {
+      var rctx = new Sammy.RenderContext(this);
+      return rctx.send.apply(rctx, arguments);
     },
 
     // Changes the location of the current window. If `to` begins with

@@ -29,7 +29,7 @@
           }
         },
         errorHandler: function(response) {
-          app.trigger('error.' + type, {error: error});
+          app.trigger('error.' + type, {error: response});
         }
       }, options || {});
 
@@ -55,6 +55,30 @@
           return app.db.allDocs($.extend(mergeCallbacks(callback), {
             include_docs: true
           }));
+        },
+        view: function(name, options, callback) {
+          if ($.isFunction(options)) {
+            callback = options;
+            options  = {};
+          }
+          return app.db.view([dbname, name].join('/'), $.extend(mergeCallbacks(callback), options));
+        },
+        viewDocs: function(name, options, callback) {
+          if ($.isFunction(options)) {
+            callback = options;
+            options  = {};
+          }
+          var wrapped_callback = function(json) {
+            var docs = [];
+            for (var i=0;i<json['rows'].length;i++) {
+              docs.push(json['rows'][i]['doc']);
+            }
+            callback(docs);
+          };
+          options = $.extend({
+            include_docs: true,
+          }, mergeCallbacks(wrapped_callback), options);
+          return app.db.view([dbname, name].join('/'), options);
         },
         create: function(doc, callback) {
           return app.db.saveDoc(mergeDefaultDocument(doc), mergeCallbacks(callback));

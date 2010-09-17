@@ -94,12 +94,12 @@
                 if ($item.length == 0) { $item = $('<li/>'); }
               } else if ($sub.children().length == 1) {
                 is_list = true;
-                $item = $sub.children(':first').clone();
+                $item = $sub.children(':first').clone(false);
               } else {
                 $item = $sub.clone();
               }
               for (var i = 0; i < value.length; i++) {
-                $container.append(meld($item.clone(), value[i], options));
+                $container.append(meld($item.clone(false), value[i], options));
               }
               if (is_list) {
                 $sub.html($container.html());
