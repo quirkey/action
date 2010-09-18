@@ -15,6 +15,10 @@
       $('#loading').hide();
     };
 
+    var clearForm = function() {
+      $('.content-input').val('');
+    };
+
     Action = this.createModel('action');
     Action.extend({
       tokens: {
@@ -42,6 +46,10 @@
 
     this.bind('run', function() {
       showLoading();
+      var ctx = this;
+      $('.action input.completed').live('click', function() {
+        ctx.trigger('toggle-action', {id: $(this).parents('.action').attr('_id')});
+      });
     });
 
     this.get('#/', function(ctx) {
@@ -58,10 +66,9 @@
     });
 
     this.post('#/action', function(ctx) {
-      Action.create(this.params['action'], function(response) {
-        ctx.log(response);
-        ctx.trigger('add-action', {id: response['id']});
-      });
+      this.send(Action.create, this.params['action'])
+          .trigger('add-action', {id: response['id']})
+          .send(clearForm);
     });
 
     this.bind('add-action', function(e, data) {
@@ -72,6 +79,10 @@
           })
           .render($('#action-template'))
           .prependTo('#actions');
+    });
+
+    this.bind('toggle-action', function(e, data) {
+      this.log('toggle-action', 'params', this.params, 'data', data);
     });
 
   }).run('#/');
