@@ -8631,7 +8631,6 @@ window.jQuery = window.$ = jQuery;
           return this.collect(data, function(i, value) {
             var idata = {}, engine = this.next_engine || location;
             name ? (idata[name] = value) : (idata = value);
-            Sammy.log(content, idata, engine);
             return this.event_context.interpolate(content, idata, engine);
           }, true);
       });
@@ -10434,11 +10433,11 @@ if (!window.Mustache) {
         return $.extend({}, options.defaultDocument(), doc);
       };
 
-      return {
+      var model = {
         timestamp: timestamp,
 
         extend: function(obj) {
-          $.extend(this, obj);
+          $.extend(model, obj);
         },
 
         all: function(callback) {
@@ -10453,6 +10452,24 @@ if (!window.Mustache) {
             options  = {};
           }
           return app.db.openDoc(id, $.extend(mergeCallbacks(callback), options));
+        },
+
+        create: function(doc, callback) {
+          return model.save(mergeDefaultDocument(doc), callback);
+        },
+
+        save: function(doc, callback) {
+          if ($.isFunction(model.beforeSave)) {
+            doc = model.beforeSave(doc);
+          }
+          return app.db.saveDoc(doc, mergeCallbacks(callback));
+        },
+
+        update: function(id, doc, callback) {
+          model.get(id, function(original_doc) {
+            doc = $.extend(original_doc, doc);
+            model.save(doc, callback);
+          });
         },
 
         view: function(name, options, callback) {
@@ -10479,19 +10496,9 @@ if (!window.Mustache) {
             include_docs: true
           }, mergeCallbacks(wrapped_callback), options);
           return app.db.view([dbname, name].join('/'), options);
-        },
-
-        create: function(doc, callback) {
-          return this.save(mergeDefaultDocument(doc), callback);
-        },
-
-        save: function(doc, callback) {
-          if ($.isFunction(this.beforeSave)) {
-            doc = this.beforeSave(doc);
-          }
-          return app.db.saveDoc(doc, mergeCallbacks(callback));
         }
       };
+      return model;
     };
 
     this.helpers({
@@ -10551,7 +10558,7 @@ if (!window.Mustache) {
       showLoading();
       var ctx = this;
       $('.action input.completed').live('click', function() {
-        ctx.trigger('toggle-action', {id: $(this).parents('.action').attr('_id')});
+        ctx.trigger('toggle-action', {id: $(this).parents('.action').attr('data-id')});
       });
     });
 
@@ -10577,15 +10584,16 @@ if (!window.Mustache) {
     this.bind('add-action', function(e, data) {
       this.log('add-action', 'params', this.params, 'data', data);
       this.send(Action.get, data['id'])
-          .then(function(content) {
-            this.next({action: content});
-          })
           .render($('#action-template'))
           .prependTo('#actions');
     });
 
     this.bind('toggle-action', function(e, data) {
       this.log('toggle-action', 'params', this.params, 'data', data);
+      this.send(Action.update, data.id, {
+        completed: true,
+        completed_at: Action.timestamp()
+      })
     });
 
   }).run('#/');

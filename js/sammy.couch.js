@@ -46,11 +46,11 @@
         return $.extend({}, options.defaultDocument(), doc);
       };
 
-      return {
+      var model = {
         timestamp: timestamp,
 
         extend: function(obj) {
-          $.extend(this, obj);
+          $.extend(model, obj);
         },
 
         all: function(callback) {
@@ -65,6 +65,24 @@
             options  = {};
           }
           return app.db.openDoc(id, $.extend(mergeCallbacks(callback), options));
+        },
+
+        create: function(doc, callback) {
+          return model.save(mergeDefaultDocument(doc), callback);
+        },
+
+        save: function(doc, callback) {
+          if ($.isFunction(model.beforeSave)) {
+            doc = model.beforeSave(doc);
+          }
+          return app.db.saveDoc(doc, mergeCallbacks(callback));
+        },
+
+        update: function(id, doc, callback) {
+          model.get(id, function(original_doc) {
+            doc = $.extend(original_doc, doc);
+            model.save(doc, callback);
+          });
         },
 
         view: function(name, options, callback) {
@@ -91,19 +109,9 @@
             include_docs: true
           }, mergeCallbacks(wrapped_callback), options);
           return app.db.view([dbname, name].join('/'), options);
-        },
-
-        create: function(doc, callback) {
-          return this.save(mergeDefaultDocument(doc), callback);
-        },
-
-        save: function(doc, callback) {
-          if ($.isFunction(this.beforeSave)) {
-            doc = this.beforeSave(doc);
-          }
-          return app.db.saveDoc(doc, mergeCallbacks(callback));
         }
       };
+      return model;
     };
 
     this.helpers({

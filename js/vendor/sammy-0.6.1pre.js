@@ -1518,7 +1518,6 @@
           return this.collect(data, function(i, value) {
             var idata = {}, engine = this.next_engine || location;
             name ? (idata[name] = value) : (idata = value);
-            Sammy.log(content, idata, engine);
             return this.event_context.interpolate(content, idata, engine);
           }, true);
       });

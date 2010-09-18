@@ -48,7 +48,7 @@
       showLoading();
       var ctx = this;
       $('.action input.completed').live('click', function() {
-        ctx.trigger('toggle-action', {id: $(this).parents('.action').attr('_id')});
+        ctx.trigger('toggle-action', {id: $(this).parents('.action').attr('data-id')});
       });
     });
 
@@ -74,15 +74,16 @@
     this.bind('add-action', function(e, data) {
       this.log('add-action', 'params', this.params, 'data', data);
       this.send(Action.get, data['id'])
-          .then(function(content) {
-            this.next({action: content});
-          })
           .render($('#action-template'))
           .prependTo('#actions');
     });
 
     this.bind('toggle-action', function(e, data) {
       this.log('toggle-action', 'params', this.params, 'data', data);
+      this.send(Action.update, data.id, {
+        completed: true,
+        completed_at: Action.timestamp()
+      })
     });
 
   }).run('#/');
