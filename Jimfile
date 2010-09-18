@@ -11,7 +11,6 @@ sammy 0.6.1pre
 sammy.json 0.6.1pre
 sammy.storage 0.6.1pre
 sammy.nested_params 0.6.1pre
-sammy.meld 0.6.1pre
 sammy.mustache 0.6.1pre
 js/sammy.couch
 js/app

@@ -2,7 +2,7 @@
 
   $.sammy('#container', function() {
     this.use('JSON')
-        .use('Meld')
+        .use('Mustache')
         .use('Storage')
         .use('NestedParams')
         .use('Couch');
@@ -60,7 +60,7 @@
             endkey: ["action", null],
             descending: true
           })
-          .renderEach($('#action-template'), 'action')
+          .renderEach($('#action-template'))
           .appendTo('#actions')
           .then(hideLoading);
     });
