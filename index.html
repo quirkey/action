@@ -36,9 +36,9 @@
       <div id="actions"></div>
     </div>
     <script id="action-template" type="text/mustache" data-engine="mustache">
-      <div class="action" data-id="{{_id}}">
+      <div class="action" data-id="{{_id}}" {{#completed}}class="complete"{{/completed}}>
         <div class="controls">
-          <input type="checkbox" name="completed" class="completed" {{#completed}}checked="checked"{{/completed}}/>
+          <input type="checkbox" class="completed" name="completed" {{#completed}}checked="checked"{{/completed}}/>
         </div>
         <div class="content">{{content}}</div>
         <div class="meta">

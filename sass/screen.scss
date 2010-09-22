@@ -17,7 +17,7 @@
 // But Compass recommends that you scope your blueprint styles
 // So that you can better control what pages use blueprint
 // when stylesheets are concatenated together.
-@include blueprint-scaffolding("body.bp");
+@include blueprint-scaffolding;
 
 body.bp {
   @include blueprint-typography(true);
@@ -29,7 +29,8 @@ body.bp {
 }
 
 form.bp {
-  @include blueprint-form; }
+  @include blueprint-form;
+}
 
 body.bp {
   #container {
@@ -37,5 +38,11 @@ body.bp {
   }
   #header, #footer {
     @include column($blueprint-grid-columns);
+  }
+}
+
+.action {
+  &.complete {
+    opacity: 0.5;
   }
 }

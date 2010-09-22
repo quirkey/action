@@ -1,14 +1,9 @@
 require 'sass/plugin'
 require 'compass'
 require 'compass/logger'
-require 'jim'
 
-# jim
-jimfile = File.join(app_dir, 'Jimfile')
-logger.debug "bundling js"
-Jim.logger = Soca.logger
-bundler = Jim::Bundler.new(File.read(jimfile), Jim::Index.new(app_dir))
-bundler.bundle!
+# jim plugin
+plugin 'jim'
 
 # compass
 
