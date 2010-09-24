@@ -15,7 +15,7 @@
     };
 
     var timestamp = function() {
-      return Math.round(new Date().getTime() / 1000);
+      return new Date().getTime();
     };
 
     this.db = db();
