@@ -32,17 +32,61 @@ form.bp {
   @include blueprint-form;
 }
 
-body.bp {
-  #container {
-    @include container;
+// ---
+
+$grey: #999;
+$lt-grey: #E5E5E5;
+
+#container {
+  @include container;
+}
+
+#header {
+  @include column($blueprint-grid-columns);
+  position: relative;
+  border-bottom: 1px solid $lt-grey;
+  h1 {
+    font-weight: bold;
+    color: #4D5B60;
+    span {
+      color: $grey;
+      font-family: monospace;
+    }
   }
-  #header, #footer {
+  #loading {
+    position: absolute;
+    top: 5px;
     @include column($blueprint-grid-columns);
+    text-align: center;
   }
 }
 
-.action {
-  &.complete {
-    opacity: 0.5;
+#footer {
+  @include column($blueprint-grid-columns);
+  font-size: 10px;
+  color: $grey;
+  margin-top: 20px;
+  text-align:center;
+  padding: 10px;
+}
+
+#actions {
+  @include column($blueprint-grid-columns);
+  .action {
+    &.complete {
+      opacity: 0.5;
+    }
+    .controls {
+      @include column(1);
+      @include prepend-top;
+    }
+    .content {
+      @include column($blueprint-grid-columns - 1, true);
+      font-size: 2.4em;
+    }
+    .meta {
+      @include prepend(1);
+      color: $lt-grey;
+    }
   }
 }

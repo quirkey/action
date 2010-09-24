@@ -12,10 +12,8 @@
 <body class="bp">
   <div id="container">
     <div id="header">
-      <h1>action =></h1>
-      <div id="loading" style="display:none">
-        loading <img src="images/loader.gif" alt="loading" />
-      </div>
+      <h1>action <span>//=></span></h1>
+      <div id="loading" style="display:none"><img src="images/loader.gif" alt="loading" /></div>
     </div>
     <div id="main">
 
@@ -36,14 +34,14 @@
       <div id="actions"></div>
     </div>
     <script id="action-template" type="text/mustache" data-engine="mustache">
-      <div class="action" data-id="{{_id}}" {{#completed}}class="complete"{{/completed}}>
+      <div class="action{{#completed}} complete{{/completed}}" data-id="{{_id}}">
         <div class="controls">
           <input type="checkbox" class="completed" name="completed" {{#completed}}checked="checked"{{/completed}}/>
         </div>
         <div class="content">{{content}}</div>
         <div class="meta">
-          <div class="updated_at timestr">{{updated_at}}</div>
-          <div class="completed_at timestr">{{completed_at}}</div>
+          <div class="updated_at">Updated <span class="timestr">{{updated_at}}</span></div>
+          {{#completed}}<div class="completed_at">Completed <span class="timestr">{{completed_at}}</span></div>{{/completed}}
         </div>
       </div>
     </script>

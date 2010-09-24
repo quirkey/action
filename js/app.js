@@ -49,7 +49,6 @@
       timestr: function(milli) {
         if (!milli || $.trim(milli) == '') { return ''; }
         var date = new Date(parseInt(milli, 10));
-        this.log('milli', milli, 'int', parseInt(milli, 10), 'date', date);
         return date.strftime('%c');
       },
 
@@ -91,7 +90,7 @@
     this.post('#/action', function(ctx) {
       this.send(Action.create, this.params['action'])
           .then(function(response) {
-            this.trigger('add-action', {id: response['id']})
+            this.event_context.trigger('add-action', {id: response['id']})
           })
           .send(clearForm);
     });
@@ -101,7 +100,7 @@
       this.send(Action.get, data['id'])
           .render($('#action-template'))
           .prependTo('#actions')
-          .then(this.formatTimes);
+          .then('formatTimes');
     });
 
     this.bind('toggle-action', function(e, data) {
