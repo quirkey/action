@@ -44,6 +44,23 @@
       }
     });
 
+
+    this.helpers({
+      timestr: function(milli) {
+        if (!milli || $.trim(milli) == '') { return ''; }
+        var date = new Date(parseInt(milli, 10));
+        this.log('milli', milli, 'int', parseInt(milli, 10), 'date', date);
+        return date.strftime('%c');
+      },
+
+      formatTimes: function() {
+        var ctx = this;
+        $('.timestr').text(function(i, original_text) {
+          return ctx.timestr(original_text);
+        }).removeClass('timestr').addClass('time');
+      }
+    });
+
     this.bind('run', function() {
       showLoading();
       var ctx = this;
@@ -67,12 +84,15 @@
           })
           .renderEach($('#action-template'))
           .appendTo('#actions')
+          .then('formatTimes')
           .then(hideLoading);
     });
 
     this.post('#/action', function(ctx) {
       this.send(Action.create, this.params['action'])
-          .trigger('add-action', {id: response['id']})
+          .then(function(response) {
+            this.trigger('add-action', {id: response['id']})
+          })
           .send(clearForm);
     });
 
@@ -80,7 +100,8 @@
       this.log('add-action', 'params', this.params, 'data', data);
       this.send(Action.get, data['id'])
           .render($('#action-template'))
-          .prependTo('#actions');
+          .prependTo('#actions')
+          .then(this.formatTimes);
     });
 
     this.bind('toggle-action', function(e, data) {
