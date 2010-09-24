@@ -43,6 +43,7 @@ $lt-grey: #E5E5E5;
 
 #header {
   @include column($blueprint-grid-columns);
+  @include clearfix;
   position: relative;
   border-bottom: 1px solid $lt-grey;
   h1 {
@@ -68,6 +69,32 @@ $lt-grey: #E5E5E5;
   margin-top: 20px;
   text-align:center;
   padding: 10px;
+}
+
+#main {
+  @include clearfix;
+}
+
+#action-form {
+  padding: 20px 0px;
+  @include clearfix;
+
+  form {
+    @include blueprint-inline-form;
+    .content-input {
+      @include column($blueprint-grid-columns - 2);
+      padding: 4px;
+      border: 1px solid $grey;
+      font-size: 2.2em;
+    }
+    input[type="submit"] {
+      border: 1px solid $lt-grey;
+      background: #738DB0;
+      color: #FFF;
+      font-size: 1.5em;
+      padding: 8px 4px;
+    }
+  }
 }
 
 #actions {

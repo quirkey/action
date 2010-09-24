@@ -522,6 +522,8 @@ form.bp textarea {
   float: left;
   margin-right: 10px;
   width: 950px;
+  overflow: hidden;
+  *zoom: 1;
   position: relative;
   border-bottom: 1px solid #e5e5e5;
 }
@@ -529,17 +531,17 @@ form.bp textarea {
 * html #header {
   overflow-x: hidden;
 }
-/* line 48, ../sass/screen.scss */
+/* line 49, ../sass/screen.scss */
 #header h1 {
   font-weight: bold;
   color: #4D5B60;
 }
-/* line 51, ../sass/screen.scss */
+/* line 52, ../sass/screen.scss */
 #header h1 span {
   color: #999999;
   font-family: monospace;
 }
-/* line 56, ../sass/screen.scss */
+/* line 57, ../sass/screen.scss */
 #header #loading {
   position: absolute;
   top: 5px;
@@ -554,7 +556,7 @@ form.bp textarea {
   overflow-x: hidden;
 }
 
-/* line 64, ../sass/screen.scss */
+/* line 65, ../sass/screen.scss */
 #footer {
   display: inline;
   float: left;
@@ -571,7 +573,50 @@ form.bp textarea {
   overflow-x: hidden;
 }
 
-/* line 73, ../sass/screen.scss */
+/* line 74, ../sass/screen.scss */
+#main {
+  overflow: hidden;
+  *zoom: 1;
+}
+
+/* line 78, ../sass/screen.scss */
+#action-form {
+  padding: 20px 0px;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 82, ../sass/screen.scss */
+#action-form form {
+  line-height: 3;
+}
+/* line 6, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_form.scss */
+#action-form form p {
+  margin-bottom: 0;
+}
+/* line 84, ../sass/screen.scss */
+#action-form form .content-input {
+  display: inline;
+  float: left;
+  margin-right: 10px;
+  width: 870px;
+  padding: 4px;
+  border: 1px solid #999999;
+  font-size: 2.2em;
+}
+/* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html #action-form form .content-input {
+  overflow-x: hidden;
+}
+/* line 90, ../sass/screen.scss */
+#action-form form input[type="submit"] {
+  border: 1px solid #e5e5e5;
+  background: #738DB0;
+  color: #FFF;
+  font-size: 1.5em;
+  padding: 8px 4px;
+}
+
+/* line 100, ../sass/screen.scss */
 #actions {
   display: inline;
   float: left;
@@ -582,11 +627,11 @@ form.bp textarea {
 * html #actions {
   overflow-x: hidden;
 }
-/* line 76, ../sass/screen.scss */
+/* line 103, ../sass/screen.scss */
 #actions .action.complete {
   opacity: 0.5;
 }
-/* line 79, ../sass/screen.scss */
+/* line 106, ../sass/screen.scss */
 #actions .action .controls {
   display: inline;
   float: left;
@@ -598,7 +643,7 @@ form.bp textarea {
 * html #actions .action .controls {
   overflow-x: hidden;
 }
-/* line 83, ../sass/screen.scss */
+/* line 110, ../sass/screen.scss */
 #actions .action .content {
   display: inline;
   float: left;
@@ -610,7 +655,7 @@ form.bp textarea {
 * html #actions .action .content {
   overflow-x: hidden;
 }
-/* line 87, ../sass/screen.scss */
+/* line 114, ../sass/screen.scss */
 #actions .action .meta {
   padding-left: 40px;
   color: #e5e5e5;
