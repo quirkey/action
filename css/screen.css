@@ -661,15 +661,19 @@ form.bp textarea {
   color: #e5e5e5;
 }
 /* line 121, ../sass/screen.scss */
+#actions .verb, #actions .subject {
+  cursor: pointer;
+}
+/* line 124, ../sass/screen.scss */
 #actions .verb {
   font-weight: bold;
 }
-/* line 124, ../sass/screen.scss */
+/* line 127, ../sass/screen.scss */
 #actions .modifier {
   font-weight: normal;
   font-color: #626262;
 }
-/* line 128, ../sass/screen.scss */
+/* line 131, ../sass/screen.scss */
 #actions .subject {
   font-weight: bold;
 }

@@ -1,6 +1,6 @@
 (function($) {
 
-  var app = $.sammy('#main', function() {
+  var app = $.sammy('#container', function() {
     this.use('JSON')
         .use('Mustache')
         .use('Storage')
@@ -47,7 +47,6 @@
               group: true
             })
             .then(function(tokens) {
-              ctx.log(tokens);
               var token_groups = {verb:{}, subject:{}},
                   max = {verb: 0, subject: 0},
                   sheet = [],
@@ -63,7 +62,6 @@
                 if (value > max[group]) { max[group] = value; }
               }
               verb_inc = max['verb'] / ctx.colors.length;
-              Sammy.log('verb_inc', verb_inc);
               for (token in token_groups['verb']) {
                 color = ctx.colors[Math.floor(token_groups['verb'][token] * verb_inc)];
                 sheet.push(['.verb-', token, ' { color:', color,';}'].join(''));
@@ -72,7 +70,6 @@
               if ($sheet.length == 0) {
                 $sheet = $('<style type="text/css" id="#verb-sheet" />').appendTo('body');
               }
-              Sammy.log('sheet', sheet);
               $sheet.text(sheet.join(' '));
             });
       }
@@ -89,9 +86,13 @@
           complete: $(this).attr('checked')
         });
       });
+      $('.action .verb').live('click', function() {
+        ctx.redirect('#', 'action', 'verb', $(this).text());
+      })
     });
 
     this.get('#/', function(ctx) {
+      showLoading();
       this.buildTokenCSS();
       this.load($('#action-index'))
           .replace('#main')
@@ -114,12 +115,28 @@
           .send(clearForm);
     });
 
+    this.get('#/action/:type/:name', function(ctx) {
+      showLoading();
+      this.load($('#action-index'))
+          .replace('#main')
+          .send(Action.viewDocs, 'by_token', {
+            startkey: [this.params.type, this.params.name + "a"],
+            endkey: [this.params.type, this.params.name],
+            descending: true
+          })
+          .renderEach($('#action-template'))
+          .appendTo('#actions')
+          .then('formatTimes')
+          .then(hideLoading);
+    });
+
     this.get('#/replicate', function(ctx) {
       this.partial($('#replicator')).then(hideLoading);
     })
 
     this.bind('add-action', function(e, data) {
       this.log('add-action', 'params', this.params, 'data', data);
+      this.buildTokenCSS();
       this.send(Action.get, data['id'])
           .render($('#action-template'))
           .prependTo('#actions')

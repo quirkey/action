@@ -118,6 +118,9 @@ $dk-grey: #626262;
     }
   }
   //
+  .verb, .subject {
+    cursor: pointer;
+  }
   .verb {
     font-weight: bold;
   }

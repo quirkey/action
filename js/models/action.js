@@ -1,4 +1,4 @@
-Action = Sammy('#main').createModel('action');
+Action = Sammy('#container').createModel('action');
 Action.extend({
   tokens: {
     modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the']
@@ -38,7 +38,6 @@ Action.extend({
         case 'subject':
           if (isModifier(token)) {
             pushToken('subject', current.join(' '));
-            pushToken('modifier', token);
             current = [];
           } else {
             current.push(token);
