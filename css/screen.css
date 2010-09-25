@@ -508,7 +508,7 @@ form.bp textarea {
   height: 250px;
 }
 
-/* line 40, ../sass/screen.scss */
+/* line 41, ../sass/screen.scss */
 #container {
   width: 950px;
   margin: 0 auto;
@@ -516,7 +516,7 @@ form.bp textarea {
   *zoom: 1;
 }
 
-/* line 44, ../sass/screen.scss */
+/* line 45, ../sass/screen.scss */
 #header {
   display: inline;
   float: left;
@@ -531,17 +531,17 @@ form.bp textarea {
 * html #header {
   overflow-x: hidden;
 }
-/* line 49, ../sass/screen.scss */
+/* line 50, ../sass/screen.scss */
 #header h1 {
   font-weight: bold;
   color: #4D5B60;
 }
-/* line 52, ../sass/screen.scss */
+/* line 53, ../sass/screen.scss */
 #header h1 span {
   color: #999999;
   font-family: monospace;
 }
-/* line 57, ../sass/screen.scss */
+/* line 58, ../sass/screen.scss */
 #header #loading {
   position: absolute;
   top: 5px;
@@ -556,7 +556,7 @@ form.bp textarea {
   overflow-x: hidden;
 }
 
-/* line 65, ../sass/screen.scss */
+/* line 66, ../sass/screen.scss */
 #footer {
   display: inline;
   float: left;
@@ -573,19 +573,19 @@ form.bp textarea {
   overflow-x: hidden;
 }
 
-/* line 74, ../sass/screen.scss */
+/* line 75, ../sass/screen.scss */
 #main {
   overflow: hidden;
   *zoom: 1;
 }
 
-/* line 78, ../sass/screen.scss */
+/* line 79, ../sass/screen.scss */
 #action-form {
   padding: 20px 0px;
   overflow: hidden;
   *zoom: 1;
 }
-/* line 82, ../sass/screen.scss */
+/* line 83, ../sass/screen.scss */
 #action-form form {
   line-height: 3;
 }
@@ -593,7 +593,7 @@ form.bp textarea {
 #action-form form p {
   margin-bottom: 0;
 }
-/* line 84, ../sass/screen.scss */
+/* line 85, ../sass/screen.scss */
 #action-form form .content-input {
   display: inline;
   float: left;
@@ -607,7 +607,7 @@ form.bp textarea {
 * html #action-form form .content-input {
   overflow-x: hidden;
 }
-/* line 90, ../sass/screen.scss */
+/* line 91, ../sass/screen.scss */
 #action-form form input[type="submit"] {
   border: 1px solid #e5e5e5;
   background: #738DB0;
@@ -616,7 +616,7 @@ form.bp textarea {
   padding: 8px 4px;
 }
 
-/* line 100, ../sass/screen.scss */
+/* line 101, ../sass/screen.scss */
 #actions {
   display: inline;
   float: left;
@@ -627,11 +627,11 @@ form.bp textarea {
 * html #actions {
   overflow-x: hidden;
 }
-/* line 103, ../sass/screen.scss */
+/* line 104, ../sass/screen.scss */
 #actions .action.complete {
   opacity: 0.5;
 }
-/* line 106, ../sass/screen.scss */
+/* line 107, ../sass/screen.scss */
 #actions .action .controls {
   display: inline;
   float: left;
@@ -643,7 +643,7 @@ form.bp textarea {
 * html #actions .action .controls {
   overflow-x: hidden;
 }
-/* line 110, ../sass/screen.scss */
+/* line 111, ../sass/screen.scss */
 #actions .action .content {
   display: inline;
   float: left;
@@ -655,8 +655,21 @@ form.bp textarea {
 * html #actions .action .content {
   overflow-x: hidden;
 }
-/* line 114, ../sass/screen.scss */
+/* line 115, ../sass/screen.scss */
 #actions .action .meta {
   padding-left: 40px;
   color: #e5e5e5;
+}
+/* line 121, ../sass/screen.scss */
+#actions .verb {
+  font-weight: bold;
+}
+/* line 124, ../sass/screen.scss */
+#actions .modifier {
+  font-weight: normal;
+  font-color: #626262;
+}
+/* line 128, ../sass/screen.scss */
+#actions .subject {
+  font-weight: bold;
 }

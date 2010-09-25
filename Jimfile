@@ -15,3 +15,4 @@ sammy.nested_params 0.6.1
 sammy.mustache 0.6.1
 js/sammy.couch
 js/app
+js/models/action

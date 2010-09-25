@@ -36,6 +36,7 @@ form.bp {
 
 $grey: #999;
 $lt-grey: #E5E5E5;
+$dk-grey: #626262;
 
 #container {
   @include container;
@@ -115,5 +116,16 @@ $lt-grey: #E5E5E5;
       @include prepend(1);
       color: $lt-grey;
     }
+  }
+  //
+  .verb {
+    font-weight: bold;
+  }
+  .modifier {
+    font-weight: normal;
+    font-color: $dk-grey;
+  }
+  .subject {
+    font-weight: bold;
   }
 }

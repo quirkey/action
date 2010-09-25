@@ -1,6 +1,6 @@
 (function($) {
 
-  $.sammy('#main', function() {
+  var app = $.sammy('#main', function() {
     this.use('JSON')
         .use('Mustache')
         .use('Storage')
@@ -19,94 +19,15 @@
       $('.content-input').val('');
     };
 
-    Action = this.createModel('action');
-    Action.extend({
-      tokens: {
-        modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the']
-      },
-
-      parse: function(content) {
-        var arr = [], hash = {};
-        content = $.trim(content.toString()); // ensure string
-        tokens = content.split(/\s/g);
-
-        var token,
-            subject,
-            token_ctx,
-            pushToken = function(type, t) {
-              if (type) {
-                hash[type] ? hash[type].push(t) : hash[type] = [t];
-                arr.push([type, t]);
-              } else {
-                arr.push(t);
-              }
-            },
-            isModifier = function(t) {
-              return ($.inArray(t, Action.tokens.modifiers) != -1);
-            };
-
-        token_ctx = 'verb';
-        var current = [];
-        // iterate through the tokens
-        for (var i=0; i < tokens.length; i++) {
-          token = tokens[i];
-          next_token = tokens[i + 1];
-          switch (token_ctx) {
-            case 'verb':
-              pushToken('verb', token);
-              if (!isModifier(next_token)) {
-                token_ctx = 'subject';
-              }
-              break;
-            case 'subject':
-              if (isModifier(token)) {
-                pushToken('subject', current.join(' '));
-                pushToken('modifier', token);
-                current = [];
-              } else {
-                current.push(token);
-              }
-              break;
-            default:
-              pushToken(false, token)
-          }
-        }
-        if (current.length > 0) {
-          pushToken('subject', current.join(' '));
-        }
-        return {array: arr, hash: hash};
-      },
-
-      parsedToHTML: function(parsed) {
-        if (parsed['array']) {
-          var html = [];
-          for (var i=0; i<parsed['array'].length; i++) {
-            var token = parsed['array'][i];
-            if ($.isArray(token)) {
-              html.push("<span class='token ");
-              html.push(token[0] + " ");
-              html.push([token[0], token[1].replace(/\s/g, '-')].join('-') + "'>");
-              html.push(token[1]);
-              html.push('</span> ');
-            } else {
-              html.push(token + ' ');
-            }
-          }
-          return html.join('');
-        } else {
-          return "";
-        }
-      },
-
-      beforeSave: function(doc) {
-        doc.parsed = this.parse(doc.content);
-        doc.parsed_html = this.parsedToHTML(doc.parsed);
-        Sammy.log('doc.parsed', doc.parsed);
-        return doc;
-      }
-    });
-
     this.helpers({
+      colors: [
+        '#4685C0',
+        '#3DB584',
+        '#89B52F',
+        '#B57E35',
+        '#B54E37',
+        '#98112C'
+      ],
       timestr: function(milli) {
         if (!milli || $.trim(milli) == '') { return ''; }
         var date = new Date(parseInt(milli, 10));
@@ -118,6 +39,30 @@
         $('.timestr').text(function(i, original_text) {
           return ctx.timestr(original_text);
         }).removeClass('timestr').addClass('time');
+      },
+
+      buildTokenCSS: function() {
+        var ctx = this;
+        this.send(Action.view, 'tokens', {
+              group: true
+            })
+            .then(function(tokens) {
+              ctx.log(tokens);
+              var token_groups = {verb:{}, subject:{}},
+                  max = {verb: 0, subject: 0},
+                  token, group, key, value;
+              for (var i = 0;i < tokens.rows.length;i++) {
+                token = tokens.rows[i];
+                group = token['key'][0];
+                key   = token['key'][1];
+                value = token['value'];
+                if (token_groups[group]) {
+                  token_groups[group][key] = value;
+                }
+                if (value > max[group]) { max[group] = value; }
+              }
+              max['verb']
+            });
       }
     });
 
@@ -135,6 +80,7 @@
     });
 
     this.get('#/', function(ctx) {
+      this.buildTokenCSS();
       this.load($('#action-index'))
           .replace('#main')
           .send(Action.viewDocs, 'by_type', {
@@ -182,7 +128,10 @@
           });
     });
 
-  }).run('#/');
+  });
 
+  $(function() {
+    app.run('#/');
+  });
 
 })(jQuery);
