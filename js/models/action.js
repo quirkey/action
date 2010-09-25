@@ -59,11 +59,11 @@ Action.extend({
       for (var i=0; i<parsed['array'].length; i++) {
         var token = parsed['array'][i];
         if ($.isArray(token)) {
-          html.push("<span class='token ");
+          html.push("<a href='#/' class='token ");
           html.push(token[0] + " ");
           html.push([token[0], token[1].replace(/\s/g, '-')].join('-') + "'>");
           html.push(token[1]);
-          html.push('</span> ');
+          html.push('</a> ');
         } else {
           html.push(token + ' ');
         }

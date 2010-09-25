@@ -12,7 +12,7 @@
 <body class="bp">
   <div id="container">
     <div id="header">
-      <h1>action <span>//=></span></h1>
+      <h1>action <em>/</em><span class='search-type'></span><em>/</em><span class='search-token'></span><em>=></em></h1>
       <div id="loading" style="display:none"><img src="images/loader.gif" alt="loading" /></div>
     </div>
     <div id="main">
@@ -39,7 +39,7 @@
         <p><label>Host</label><input name="replication[host]" value="127.0.0.1"/></p>
         <p><label>Port</label><input name="replication[port]" value="5984"/></p>
         <p><label>Database</label><input name="replication[databse]" value="action"/></p>
-        <p><input type="submit" value="go"></p>
+        <p><input type="submit" value="replicate"></p>
       </form>
     </div>
     <script id="action-template" type="text/mustache" data-engine="mustache">

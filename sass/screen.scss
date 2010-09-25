@@ -50,9 +50,16 @@ $dk-grey: #626262;
   h1 {
     font-weight: bold;
     color: #4D5B60;
-    span {
+    em {
       color: $grey;
       font-family: monospace;
+    }
+    .search-type, .search-token {
+      font-size: 0.7em;
+      padding: 0px 4px;
+    }
+    .search-type {
+      color: $dk-grey;
     }
   }
   #loading {
@@ -111,6 +118,10 @@ $dk-grey: #626262;
     .content {
       @include column($blueprint-grid-columns - 1, true);
       font-size: 2.4em;
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
     }
     .meta {
       @include prepend(1);
@@ -118,9 +129,6 @@ $dk-grey: #626262;
     }
   }
   //
-  .verb, .subject {
-    cursor: pointer;
-  }
   .verb {
     font-weight: bold;
   }
@@ -131,4 +139,5 @@ $dk-grey: #626262;
   .subject {
     font-weight: bold;
   }
+
 }

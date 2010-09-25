@@ -64,15 +64,25 @@
               verb_inc = max['verb'] / ctx.colors.length;
               for (token in token_groups['verb']) {
                 color = ctx.colors[Math.floor(token_groups['verb'][token] * verb_inc)];
-                sheet.push(['.verb-', token, ' { color:', color,';}'].join(''));
+                sheet.push(['.verb-', token, ' { color:', color, ' !important;}'].join(''));
               }
               var $sheet = $('style#verb-sheet');
               if ($sheet.length == 0) {
-                $sheet = $('<style type="text/css" id="#verb-sheet" />').appendTo('body');
+                $sheet = $('<style type="text/css" id="verb-sheet" />').appendTo('body');
               }
               $sheet.text(sheet.join(' '));
             });
+      },
+
+      setSearchHeader: function(params) {
+        this.log('setSearchHeader', params);
+        if (params.length == 0) return;
+        $('#header .search-type').text(params.type || '');
+        $('#header .search-token')
+          .text(params.token || '')
+          .addClass([params.type, params.token].join('-'));
       }
+
     });
 
     this.bind('run', function() {
@@ -86,7 +96,8 @@
           complete: $(this).attr('checked')
         });
       });
-      $('.action .verb').live('click', function() {
+      $('.action .verb').live('click', function(e) {
+        e.preventDefault();
         ctx.redirect('#', 'action', 'verb', $(this).text());
       })
     });
@@ -94,6 +105,7 @@
     this.get('#/', function(ctx) {
       showLoading();
       this.buildTokenCSS();
+      this.setSearchHeader({});
       this.load($('#action-index'))
           .replace('#main')
           .send(Action.viewDocs, 'by_type', {
@@ -115,13 +127,15 @@
           .send(clearForm);
     });
 
-    this.get('#/action/:type/:name', function(ctx) {
+    this.get('#/action/:type/:token', function(ctx) {
       showLoading();
+      this.buildTokenCSS();
+      this.setSearchHeader(this.params);
       this.load($('#action-index'))
           .replace('#main')
           .send(Action.viewDocs, 'by_token', {
-            startkey: [this.params.type, this.params.name + "a"],
-            endkey: [this.params.type, this.params.name],
+            startkey: [this.params.type, this.params.token + "a"],
+            endkey: [this.params.type, this.params.token],
             descending: true
           })
           .renderEach($('#action-template'))
