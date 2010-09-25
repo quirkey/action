@@ -49,7 +49,10 @@ $dk-grey: #626262;
   border-bottom: 1px solid $lt-grey;
   h1 {
     font-weight: bold;
-    color: #4D5B60;
+    a {
+      color: #4D5B60;
+      text-decoration: none;
+    }
     em {
       color: $grey;
       font-family: monospace;
@@ -121,6 +124,9 @@ $dk-grey: #626262;
       a {
         text-decoration: none;
         color: inherit;
+        &:hover {
+          text-decoration:underline;
+        }
       }
     }
     .meta {

@@ -11502,6 +11502,7 @@ Action.extend({
         case 'subject':
           if (isModifier(token)) {
             pushToken('subject', current.join(' '));
+            pushToken(false, token);
             current = [];
           } else {
             current.push(token);
