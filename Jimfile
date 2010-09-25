@@ -8,10 +8,10 @@ sha1
 strftime
 jquery 1.4.2
 jquery.couch 0.11
-sammy 0.6.1pre
-sammy.json 0.6.1pre
-sammy.storage 0.6.1pre
-sammy.nested_params 0.6.1pre
-sammy.mustache 0.6.1pre
+sammy 0.6.1
+sammy.json 0.6.1
+sammy.storage 0.6.1
+sammy.nested_params 0.6.1
+sammy.mustache 0.6.1
 js/sammy.couch
 js/app

@@ -7844,9 +7844,9 @@ window.jQuery = window.$ = jQuery;
 })(jQuery);
 
 // name: sammy
-// version: 0.6.1pre
+// version: 0.6.1
 
-(function($) {
+(function($, window) {
 
   var Sammy,
       PATH_REPLACER = "([^\/]+)",
@@ -7915,7 +7915,7 @@ window.jQuery = window.$ = jQuery;
     }
   };
 
-  Sammy.VERSION = '0.6.1pre';
+  Sammy.VERSION = '0.6.1';
 
   // Add to the global logger pool. Takes a function that accepts an
   // unknown number of arguments and should print them or send them somewhere
@@ -8072,7 +8072,7 @@ window.jQuery = window.$ = jQuery;
         if (proxy.is_native === false && !non_native) {
           Sammy.log('native hash change exists, using');
           proxy.is_native = true;
-          clearInterval(Sammy.HashLocationProxy._interval);
+          window.clearInterval(Sammy.HashLocationProxy._interval);
         }
         app.trigger('location-changed');
       });
@@ -8087,7 +8087,7 @@ window.jQuery = window.$ = jQuery;
       $(window).unbind('hashchange.' + this.app.eventNamespace());
       Sammy.HashLocationProxy._bindings--;
       if (Sammy.HashLocationProxy._bindings <= 0) {
-        clearInterval(Sammy.HashLocationProxy._interval);
+        window.clearInterval(Sammy.HashLocationProxy._interval);
       }
     },
 
@@ -8111,17 +8111,17 @@ window.jQuery = window.$ = jQuery;
       if (!Sammy.HashLocationProxy._interval) {
         if (!every) { every = 10; }
         var hashCheck = function() {
-          current_location = proxy.getLocation();
+          var current_location = proxy.getLocation();
           if (!Sammy.HashLocationProxy._last_location ||
             current_location != Sammy.HashLocationProxy._last_location) {
-            setTimeout(function() {
+            window.setTimeout(function() {
               $(window).trigger('hashchange', [true]);
             }, 13);
           }
           Sammy.HashLocationProxy._last_location = current_location;
         };
         hashCheck();
-        Sammy.HashLocationProxy._interval = setInterval(hashCheck, every);
+        Sammy.HashLocationProxy._interval = window.setInterval(hashCheck, every);
       }
     }
   };
@@ -8780,6 +8780,7 @@ window.jQuery = window.$ = jQuery;
           befores,
           before,
           callback_args,
+          path_params,
           final_returned;
 
       this.log('runRoute', [verb, path].join(' '));
@@ -9007,7 +9008,7 @@ window.jQuery = window.$ = jQuery;
     },
 
     _getFormVerb: function(form) {
-      var $form = $(form), verb;
+      var $form = $(form), verb, $_method;
       $_method = $form.find('input[name="_method"]');
       if ($_method.length > 0) { verb = $_method.val(); }
       if (!verb) { verb = $form[0].getAttribute('method'); }
@@ -9119,6 +9120,9 @@ window.jQuery = window.$ = jQuery;
     // called. This allows for the guarunteed order of execution while working
     // with async operations.
     //
+    // If then() is passed a string instead of a function, the string is looked
+    // up as a helper method on the event context.
+    //
     // ### Example
     //
     //      this.get('#/', function() {
@@ -9224,7 +9228,7 @@ window.jQuery = window.$ = jQuery;
     load: function(location, options, callback) {
       var context = this;
       return this.then(function() {
-        var should_cache, cached, is_json;
+        var should_cache, cached, is_json, location_array;
         if (_isFunction(options)) {
           callback = options;
           options = {};
@@ -9236,6 +9240,7 @@ window.jQuery = window.$ = jQuery;
           // its a path
           is_json      = (location.match(/\.json$/) || options.json);
           should_cache = ((is_json && options.cache === true) || options.cache !== false);
+          context.next_engine = context.event_context.engineFor(location);
           delete options.cache;
           delete options.json;
           if (options.engine) {
@@ -9358,7 +9363,8 @@ window.jQuery = window.$ = jQuery;
     },
 
     // loads a template, and then interpolates it for each item in the `data`
-    // array.
+    // array. If a callback is passed, it will call the callback with each
+    // item in the array _after_ interpolation
     renderEach: function(location, name, data, callback) {
       if (_isArray(name)) {
         callback = data;
@@ -9370,11 +9376,19 @@ window.jQuery = window.$ = jQuery;
           if (!data) {
             data = _isArray(this.previous_content) ? this.previous_content : [];
           }
-          return this.collect(data, function(i, value) {
-            var idata = {}, engine = this.next_engine || location;
-            name ? (idata[name] = value) : (idata = value);
-            return this.event_context.interpolate(content, idata, engine);
-          }, true);
+          if (callback) {
+            $.each(data, function(i, value) {
+              var idata = {}, engine = this.next_engine || location;
+              name ? (idata[name] = value) : (idata = value);
+              callback(value, rctx.event_context.interpolate(content, idata, engine));
+            });
+          } else {
+            return this.collect(data, function(i, value) {
+              var idata = {}, engine = this.next_engine || location;
+              name ? (idata[name] = value) : (idata = value);
+              return this.event_context.interpolate(content, idata, engine);
+            }, true);
+          }
       });
     },
 
@@ -9506,6 +9520,7 @@ window.jQuery = window.$ = jQuery;
       if (engine && _isFunction(context[engine])) {
         return context[engine];
       }
+
       if (context.app.template_engine) {
         return this.engineFor(context.app.template_engine);
       }
@@ -9533,6 +9548,22 @@ window.jQuery = window.$ = jQuery;
     //
     render: function(location, data, callback) {
       return new Sammy.RenderContext(this).render(location, data, callback);
+    },
+
+    // Create and return a `Sammy.RenderContext` calling `renderEach()` on it.
+    // Loads the template and interpolates the data for each item,
+    // however does not actual place it in the DOM.
+    //
+    // ### Example
+    //
+    //      // mytemplate.mustache <div class="name">{{name}}</div>
+    //      renderEach('mytemplate.mustache', [{name: 'quirkey'}, {name: 'endor'}])
+    //      // sets the `content` to <div class="name">quirkey</div><div class="name">endor</div>
+    //      renderEach('mytemplate.mustache', [{name: 'quirkey'}, {name: 'endor'}]).appendTo('ul');
+    //      // appends the rendered content to $('ul')
+    //
+    renderEach: function(location, name, data, callback) {
+      return new Sammy.RenderContext(this).renderEach(location, name, data, callback);
     },
 
     // create a new `Sammy.RenderContext` calling `load()` with `location` and
@@ -9620,7 +9651,7 @@ window.jQuery = window.$ = jQuery;
   // An alias to Sammy
   $.sammy = window.Sammy = Sammy;
 
-})(jQuery);
+})(jQuery, window);
 
 (function($) {
 
@@ -10692,7 +10723,7 @@ if (!window.Mustache) {
     See http://mustache.github.com/ for more info.
   */
 
-  window.Mustache = function() {
+  var Mustache = function() {
     var Renderer = function() {};
 
     Renderer.prototype = {
@@ -11252,7 +11283,7 @@ if (!window.Mustache) {
 
 (function($) {
 
-  $.sammy('#container', function() {
+  $.sammy('#main', function() {
     this.use('JSON')
         .use('Mustache')
         .use('Storage')
@@ -11274,28 +11305,89 @@ if (!window.Mustache) {
     Action = this.createModel('action');
     Action.extend({
       tokens: {
-        before_subject: ['for','about','to','with']
+        modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the']
       },
+
       parse: function(content) {
-        var parsed = {};
+        var arr = [], hash = {};
         content = $.trim(content.toString()); // ensure string
         tokens = content.split(/\s/g);
-        parsed['verb'] = tokens.shift();
+
+        var token,
+            subject,
+            token_ctx,
+            pushToken = function(type, t) {
+              if (type) {
+                hash[type] ? hash[type].push(t) : hash[type] = [t];
+                arr.push([type, t]);
+              } else {
+                arr.push(t);
+              }
+            },
+            isModifier = function(t) {
+              return ($.inArray(t, Action.tokens.modifiers) != -1);
+            };
+
+        token_ctx = 'verb';
+        var current = [];
         // iterate through the tokens
         for (var i=0; i < tokens.length; i++) {
-          if ($.inArray(tokens[i], this.tokens.before_subject) != -1) {
-            parsed['subject'] = tokens[i + 1];
+          token = tokens[i];
+          next_token = tokens[i + 1];
+          switch (token_ctx) {
+            case 'verb':
+              pushToken('verb', token);
+              if (!isModifier(next_token)) {
+                token_ctx = 'subject';
+              }
+              break;
+            case 'subject':
+              if (isModifier(token)) {
+                pushToken('subject', current.join(' '));
+                pushToken('modifier', token);
+                current = [];
+              } else {
+                current.push(token);
+              }
+              break;
+            default:
+              pushToken(false, token)
           }
         }
-        return parsed;
+        if (current.length > 0) {
+          pushToken('subject', current.join(' '));
+        }
+        return {array: arr, hash: hash};
       },
+
+      parsedToHTML: function(parsed) {
+        if (parsed['array']) {
+          var html = [];
+          for (var i=0; i<parsed['array'].length; i++) {
+            var token = parsed['array'][i];
+            if ($.isArray(token)) {
+              html.push("<span class='token ");
+              html.push(token[0] + " ");
+              html.push([token[0], token[1].replace(/\s/g, '-')].join('-') + "'>");
+              html.push(token[1]);
+              html.push('</span> ');
+            } else {
+              html.push(token + ' ');
+            }
+          }
+          return html.join('');
+        } else {
+          return "";
+        }
+      },
+
       beforeSave: function(doc) {
         doc.parsed = this.parse(doc.content);
+        doc.parsed_html = this.parsedToHTML(doc.parsed);
         Sammy.log('doc.parsed', doc.parsed);
         return doc;
       }
     });
-
 
     this.helpers({
       timestr: function(milli) {
@@ -11342,10 +11434,14 @@ if (!window.Mustache) {
     this.post('#/action', function(ctx) {
       this.send(Action.create, this.params['action'])
           .then(function(response) {
-            this.event_context.trigger('add-action', {id: response['id']})
+            this.event_context.trigger('add-action', {id: response['id']});
           })
           .send(clearForm);
     });
+
+    this.get('#/replicate', function(ctx) {
+      this.partial($('#replicator')).then(hideLoading);
+    })
 
     this.bind('add-action', function(e, data) {
       this.log('add-action', 'params', this.params, 'data', data);

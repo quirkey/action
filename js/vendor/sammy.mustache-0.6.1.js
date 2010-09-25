@@ -8,7 +8,7 @@ if (!window.Mustache) {
     See http://mustache.github.com/ for more info.
   */
 
-  window.Mustache = function() {
+  var Mustache = function() {
     var Renderer = function() {};
 
     Renderer.prototype = {

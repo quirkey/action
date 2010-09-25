@@ -31,12 +31,25 @@
       </div>
       <div id="actions"></div>
     </div>
+    <div id="replicator">
+      <h2>Replicate</h2>
+      <form class="bp" action="#/replicate" method="post">
+        <p><label>Username</label><input name="replication[username]"/></p>
+        <p><label>Password</label><input name="replication[password]" type="password"/></p>
+        <p><label>Host</label><input name="replication[host]" value="127.0.0.1"/></p>
+        <p><label>Port</label><input name="replication[port]" value="5984"/></p>
+        <p><label>Database</label><input name="replication[databse]" value="action"/></p>
+        <p><input type="submit" value="go"></p>
+      </form>
+    </div>
     <script id="action-template" type="text/mustache" data-engine="mustache">
       <div class="action{{#completed}} complete{{/completed}}" data-id="{{_id}}">
         <div class="controls">
           <input type="checkbox" class="completed" name="completed" {{#completed}}checked="checked"{{/completed}}/>
         </div>
-        <div class="content">{{content}}</div>
+        <div class="content">
+          {{#parsed_html}}{{{parsed_html}}}{{/parsed_html}}{{^parsed_html}}{{content}}{{/parsed_html}}
+        </div>
         <div class="meta">
           <div class="updated_at">Updated <span class="timestr">{{updated_at}}</span></div>
           {{#completed}}<div class="completed_at">Completed <span class="timestr">{{completed_at}}</span></div>{{/completed}}
