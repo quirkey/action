@@ -11333,7 +11333,8 @@ if (!window.Mustache) {
               ctx.log(tokens);
               var token_groups = {verb:{}, subject:{}},
                   max = {verb: 0, subject: 0},
-                  token, group, key, value;
+                  sheet = [],
+                  token, group, key, value, color, verb_inc;
               for (var i = 0;i < tokens.rows.length;i++) {
                 token = tokens.rows[i];
                 group = token['key'][0];
@@ -11344,7 +11345,18 @@ if (!window.Mustache) {
                 }
                 if (value > max[group]) { max[group] = value; }
               }
-              max['verb']
+              verb_inc = max['verb'] / ctx.colors.length;
+              Sammy.log('verb_inc', verb_inc);
+              for (token in token_groups['verb']) {
+                color = ctx.colors[Math.floor(token_groups['verb'][token] * verb_inc)];
+                sheet.push(['.verb-', token, ' { color:', color,';}'].join(''));
+              }
+              var $sheet = $('style#verb-sheet');
+              if ($sheet.length == 0) {
+                $sheet = $('<style type="text/css" id="#verb-sheet" />').appendTo('body');
+              }
+              Sammy.log('sheet', sheet);
+              $sheet.text(sheet.join(' '));
             });
       }
     });
