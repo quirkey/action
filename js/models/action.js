@@ -4,6 +4,26 @@ Action.extend({
     modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the']
   },
 
+  loadTokens: function(callback) {
+    Action.view('tokens', {group: true}, function(tokens) {
+      var token_groups = {verb:{}, subject:{}},
+          max = {verb: 0, subject: 0},
+          sheet = [],
+          token, group, key, value;
+      for (var i = 0;i < tokens.rows.length;i++) {
+        token = tokens.rows[i];
+        group = token['key'][0];
+        key   = token['key'][1];
+        value = token['value'];
+        if (token_groups[group]) {
+          token_groups[group][key] = value;
+        }
+        if (value > max[group]) { max[group] = value; }
+      }
+      callback({max: max, token_groups: token_groups});
+    });
+  },
+
   parse: function(content) {
     var arr = [], hash = {};
     content = $.trim(content.toString()); // ensure string

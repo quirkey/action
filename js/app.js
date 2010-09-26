@@ -43,27 +43,12 @@
 
       buildTokenCSS: function() {
         var ctx = this;
-        this.send(Action.view, 'tokens', {
-              group: true
-            })
+        this.send(Action.loadTokens)
             .then(function(tokens) {
-              var token_groups = {verb:{}, subject:{}},
-                  max = {verb: 0, subject: 0},
-                  sheet = [],
-                  token, group, key, value, color, verb_inc;
-              for (var i = 0;i < tokens.rows.length;i++) {
-                token = tokens.rows[i];
-                group = token['key'][0];
-                key   = token['key'][1];
-                value = token['value'];
-                if (token_groups[group]) {
-                  token_groups[group][key] = value;
-                }
-                if (value > max[group]) { max[group] = value; }
-              }
-              verb_inc = max['verb'] / ctx.colors.length;
-              for (token in token_groups['verb']) {
-                color = ctx.colors[Math.floor(token_groups['verb'][token] * verb_inc)];
+              var verb_inc, token, color, sheet = [];
+              verb_inc = tokens.max['verb'] / ctx.colors.length;
+              for (token in tokens.token_groups['verb']) {
+                color = ctx.colors[Math.round(tokens.token_groups['verb'][token] * verb_inc)];
                 sheet.push(['.verb-', token, ' { color:', color, ' !important;}'].join(''));
               }
               var $sheet = $('style#verb-sheet');
