@@ -135,6 +135,9 @@ $dk-grey: #626262;
     .meta {
       @include prepend(1);
       color: $lt-grey;
+      &:hover {
+        color: $dk-grey;
+      }
     }
   }
   //

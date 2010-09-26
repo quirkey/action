@@ -700,16 +700,20 @@ form.bp textarea {
   padding-left: 40px;
   color: #e5e5e5;
 }
-/* line 141, ../sass/screen.scss */
+/* line 138, ../sass/screen.scss */
+.actions .action .meta:hover {
+  color: #626262;
+}
+/* line 144, ../sass/screen.scss */
 .actions .verb {
   font-weight: bold;
 }
-/* line 144, ../sass/screen.scss */
+/* line 147, ../sass/screen.scss */
 .actions .modifier {
   font-weight: normal;
   font-color: #626262;
 }
-/* line 148, ../sass/screen.scss */
+/* line 151, ../sass/screen.scss */
 .actions .subject {
   font-weight: bold;
 }
