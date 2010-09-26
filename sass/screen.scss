@@ -83,11 +83,13 @@ $dk-grey: #626262;
 }
 
 #main {
+  @include column($blueprint-grid-columns);
   @include clearfix;
 }
 
-#action-form {
+.action-form {
   padding: 20px 0px;
+  @include column($blueprint-grid-columns);
   @include clearfix;
 
   form {
@@ -108,8 +110,9 @@ $dk-grey: #626262;
   }
 }
 
-#actions {
+.actions {
   @include column($blueprint-grid-columns);
+  @include clearfix;
   .action {
     &.complete {
       opacity: 0.5;

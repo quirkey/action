@@ -588,26 +588,42 @@ form.bp textarea {
 
 /* line 85, ../sass/screen.scss */
 #main {
+  display: inline;
+  float: left;
+  margin-right: 10px;
+  width: 950px;
   overflow: hidden;
   *zoom: 1;
+}
+/* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html #main {
+  overflow-x: hidden;
 }
 
-/* line 89, ../sass/screen.scss */
-#action-form {
+/* line 90, ../sass/screen.scss */
+.action-form {
   padding: 20px 0px;
+  display: inline;
+  float: left;
+  margin-right: 10px;
+  width: 950px;
   overflow: hidden;
   *zoom: 1;
 }
-/* line 93, ../sass/screen.scss */
-#action-form form {
+/* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html .action-form {
+  overflow-x: hidden;
+}
+/* line 95, ../sass/screen.scss */
+.action-form form {
   line-height: 3;
 }
 /* line 6, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_form.scss */
-#action-form form p {
+.action-form form p {
   margin-bottom: 0;
 }
-/* line 95, ../sass/screen.scss */
-#action-form form .content-input {
+/* line 97, ../sass/screen.scss */
+.action-form form .content-input {
   display: inline;
   float: left;
   margin-right: 10px;
@@ -617,11 +633,11 @@ form.bp textarea {
   font-size: 2.2em;
 }
 /* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
-* html #action-form form .content-input {
+* html .action-form form .content-input {
   overflow-x: hidden;
 }
-/* line 101, ../sass/screen.scss */
-#action-form form input[type="submit"] {
+/* line 103, ../sass/screen.scss */
+.action-form form input[type="submit"] {
   border: 1px solid #e5e5e5;
   background: #738DB0;
   color: #FFF;
@@ -629,23 +645,25 @@ form.bp textarea {
   padding: 8px 4px;
 }
 
-/* line 111, ../sass/screen.scss */
-#actions {
+/* line 113, ../sass/screen.scss */
+.actions {
   display: inline;
   float: left;
   margin-right: 10px;
   width: 950px;
+  overflow: hidden;
+  *zoom: 1;
 }
 /* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
-* html #actions {
+* html .actions {
   overflow-x: hidden;
 }
-/* line 114, ../sass/screen.scss */
-#actions .action.complete {
+/* line 117, ../sass/screen.scss */
+.actions .action.complete {
   opacity: 0.5;
 }
-/* line 117, ../sass/screen.scss */
-#actions .action .controls {
+/* line 120, ../sass/screen.scss */
+.actions .action .controls {
   display: inline;
   float: left;
   margin-right: 10px;
@@ -653,11 +671,11 @@ form.bp textarea {
   margin-top: 1.5em;
 }
 /* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
-* html #actions .action .controls {
+* html .actions .action .controls {
   overflow-x: hidden;
 }
-/* line 121, ../sass/screen.scss */
-#actions .action .content {
+/* line 124, ../sass/screen.scss */
+.actions .action .content {
   display: inline;
   float: left;
   margin-right: 0;
@@ -665,33 +683,33 @@ form.bp textarea {
   font-size: 2.4em;
 }
 /* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
-* html #actions .action .content {
+* html .actions .action .content {
   overflow-x: hidden;
 }
-/* line 124, ../sass/screen.scss */
-#actions .action .content a {
+/* line 127, ../sass/screen.scss */
+.actions .action .content a {
   text-decoration: none;
   color: inherit;
 }
-/* line 127, ../sass/screen.scss */
-#actions .action .content a:hover {
+/* line 130, ../sass/screen.scss */
+.actions .action .content a:hover {
   text-decoration: underline;
 }
-/* line 132, ../sass/screen.scss */
-#actions .action .meta {
+/* line 135, ../sass/screen.scss */
+.actions .action .meta {
   padding-left: 40px;
   color: #e5e5e5;
 }
-/* line 138, ../sass/screen.scss */
-#actions .verb {
+/* line 141, ../sass/screen.scss */
+.actions .verb {
   font-weight: bold;
 }
-/* line 141, ../sass/screen.scss */
-#actions .modifier {
+/* line 144, ../sass/screen.scss */
+.actions .modifier {
   font-weight: normal;
   font-color: #626262;
 }
-/* line 145, ../sass/screen.scss */
-#actions .subject {
+/* line 148, ../sass/screen.scss */
+.actions .subject {
   font-weight: bold;
 }

@@ -11374,7 +11374,7 @@ if (!window.Mustache) {
       showLoading();
       this.buildTokenCSS();
       this.setSearchHeader({});
-      this.load($('#action-index'))
+      this.load($('#templates .action-index'))
           .replace('#main')
           .send(Action.viewDocs, 'by_type', {
             startkey: ["action", "a"],
@@ -11382,7 +11382,7 @@ if (!window.Mustache) {
             descending: true
           })
           .renderEach($('#action-template'))
-          .appendTo('#actions')
+          .appendTo('#main .actions')
           .then('formatTimes')
           .then(hideLoading);
     });
@@ -11399,7 +11399,7 @@ if (!window.Mustache) {
       showLoading();
       this.buildTokenCSS();
       this.setSearchHeader(this.params);
-      this.load($('#action-index'))
+      this.load($('#templates .action-index'))
           .replace('#main')
           .send(Action.viewDocs, 'by_token', {
             startkey: [this.params.type, this.params.token + "a"],
@@ -11407,7 +11407,7 @@ if (!window.Mustache) {
             descending: true
           })
           .renderEach($('#action-template'))
-          .appendTo('#actions')
+          .appendTo('#main .actions')
           .then('formatTimes')
           .then(hideLoading);
     });
@@ -11421,7 +11421,7 @@ if (!window.Mustache) {
       this.buildTokenCSS();
       this.send(Action.get, data['id'])
           .render($('#action-template'))
-          .prependTo('#actions')
+          .prependTo('#main .actions')
           .then('formatTimes');
     });
 
