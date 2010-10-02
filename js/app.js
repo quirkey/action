@@ -21,13 +21,17 @@
 
     this.helpers({
       colors: [
-        '#4685C0',
-        '#3DB584',
-        '#89B52F',
-        '#B57E35',
-        '#B54E37',
-        '#98112C'
+
       ],
+      hexToRGB: function(hex) {
+        hex = hex.replace(/^\#/,'');
+        var rgb = [], i = 0;
+        for (;i < 6;i+=2) {
+          rgb.push(parseInt(hex.substring(i,i+2),16));
+        }
+        return rgb;
+      },
+
       timestr: function(milli) {
         if (!milli || $.trim(milli) == '') { return ''; }
         var date = new Date(parseInt(milli, 10));
@@ -45,10 +49,12 @@
         var ctx = this;
         this.send(Action.loadTokens)
             .then(function(tokens) {
-              var verb_inc, token, color, sheet = [];
+              var verb_inc, token, color, sheet = [], count;
               verb_inc = tokens.max['verb'] / ctx.colors.length;
               for (token in tokens.token_groups['verb']) {
-                color = ctx.colors[Math.round(tokens.token_groups['verb'][token] * verb_inc)];
+                count = tokens.token_groups['verb'][token];
+                color = ctx.colors[Math.round(count / verb_inc) - 1];
+                Sammy.log('verb_inc', verb_inc, 'count', count, 'color', color);
                 sheet.push(['.verb-', token, ' { color:', color, ' !important;}'].join(''));
               }
               var $sheet = $('style#verb-sheet');
@@ -84,7 +90,11 @@
       $('.action .verb').live('click', function(e) {
         e.preventDefault();
         ctx.redirect('#', 'action', 'verb', $(this).text());
-      })
+      });
+      $('.action .subject').live('click', function(e) {
+        e.preventDefault();
+        ctx.redirect('#', 'action', 'subject', $(this).text());
+      });
     });
 
     this.get('#/', function(ctx) {
