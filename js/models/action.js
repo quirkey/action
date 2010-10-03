@@ -1,7 +1,7 @@
 Action = Sammy('#container').createModel('action');
 Action.extend({
   tokens: {
-    modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the','out']
+    modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the','out','into','-']
   },
 
   loadTokens: function(callback) {
