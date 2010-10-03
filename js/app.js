@@ -72,6 +72,19 @@
         $('#header .search-token')
           .text(params.token || '')
           .addClass([params.type, params.token].join('-'));
+      },
+
+      loadActions: function(action_func, header, options) {
+        showLoading();
+        this.buildTokenCSS();
+        this.setSearchHeader(header || this.params);
+        this.load($('#templates .action-index'))
+            .replace('#main')
+            .send(Action[action_func], options)
+            .renderEach($('#action-template'))
+            .appendTo('#main .actions')
+            .then('formatTimes')
+            .then(hideLoading);
       }
 
     });
@@ -98,20 +111,7 @@
     });
 
     this.get('#/', function(ctx) {
-      showLoading();
-      this.buildTokenCSS();
-      this.setSearchHeader({});
-      this.load($('#templates .action-index'))
-          .replace('#main')
-          .send(Action.viewDocs, 'by_type', {
-            startkey: ["action", "a"],
-            endkey: ["action", null],
-            descending: true
-          })
-          .renderEach($('#action-template'))
-          .appendTo('#main .actions')
-          .then('formatTimes')
-          .then(hideLoading);
+      this.loadActions('viewIndex', {});
     });
 
     this.post('#/action', function(ctx) {
@@ -123,37 +123,11 @@
     });
 
     this.get('#/archive', function(ctx) {
-      showLoading();
-      this.buildTokenCSS();
-      this.setSearchHeader({type: 'archive'});
-      this.load($('#templates .action-index'))
-          .replace('#main')
-          .send(Action.viewDocs, 'by_complete', {
-        startkey: ["a","a"],
-        endkey: [1, null],
-        descending: true
-      })
-      .renderEach($('#action-template'))
-      .appendTo('#main .actions')
-      .then('formatTimes')
-      .then(hideLoading);
+      this.loadActions('viewCompleted', {});
     });
 
     this.get('#/action/:type/:token', function(ctx) {
-      showLoading();
-      this.buildTokenCSS();
-      this.setSearchHeader(this.params);
-      this.load($('#templates .action-index'))
-          .replace('#main')
-          .send(Action.viewDocs, 'by_token', {
-            startkey: [this.params.type, this.params.token + "a"],
-            endkey: [this.params.type, this.params.token],
-            descending: true
-          })
-          .renderEach($('#action-template'))
-          .appendTo('#main .actions')
-          .then('formatTimes')
-          .then(hideLoading);
+      this.loadActions('viewByToken', this.params, this.params);
     });
 
     this.get('#/replicate', function(ctx) {

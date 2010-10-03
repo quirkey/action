@@ -100,5 +100,30 @@ Action.extend({
     doc.parsed_html = this.parsedToHTML(doc.parsed);
     Sammy.log('doc.parsed', doc.parsed);
     return doc;
+  },
+
+  viewIndex: function(options, callback) {
+    return Action.viewDocs('by_complete', $.extend({
+      startkey: [0,"a"],
+      endkey: [null, null],
+      descending: true
+    }, options || {}), callback);
+  },
+
+  viewCompleted: function(options, callback) {
+    return Action.viewDocs('by_complete', $.extend({
+      startkey: ["a","a"],
+      endkey: [1, null],
+      descending: true
+    }, options || {}), callback);
+  },
+
+  viewByToken: function(options, callback) {
+    return Action.viewDocs('by_token', $.extend({
+      startkey: [options.type, options.token + "a"],
+      endkey: [options.type, options.token],
+      descending: true
+    }, options || {}), callback);
   }
+
 });
