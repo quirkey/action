@@ -50,10 +50,10 @@
         <div class="content">
           {{#parsed_html}}{{{parsed_html}}}{{/parsed_html}}{{^parsed_html}}{{content}}{{/parsed_html}}
         </div>
-        <div class="meta">
-          <div class="updated_at">Updated <span class="timestr">{{updated_at}}</span></div>
-          {{#completed}}<div class="completed_at">Completed <span class="timestr">{{completed_at}}</span></div>{{/completed}}
-        </div>
+        <ul class="meta">
+          {{#completed}}<li class="completed_at"><strong>Completed</strong> <span class="timestr">{{completed_at}}</span></li>{{/completed}}
+          <li class="updated_at"><strong>Updated</strong> <span class="timestr">{{updated_at}}</span></li>
+        </ul>
       </div>
     </script>
   </div>

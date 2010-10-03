@@ -122,6 +122,23 @@
           .send(clearForm);
     });
 
+    this.get('#/archive', function(ctx) {
+      showLoading();
+      this.buildTokenCSS();
+      this.setSearchHeader({type: 'archive'});
+      this.load($('#templates .action-index'))
+          .replace('#main')
+          .send(Action.viewDocs, 'by_complete', {
+        startkey: ["a","a"],
+        endkey: [1, null],
+        descending: true
+      })
+      .renderEach($('#action-template'))
+      .appendTo('#main .actions')
+      .then('formatTimes')
+      .then(hideLoading);
+    });
+
     this.get('#/action/:type/:token', function(ctx) {
       showLoading();
       this.buildTokenCSS();

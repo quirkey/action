@@ -11535,6 +11535,23 @@ if (!window.Mustache) {
           .send(clearForm);
     });
 
+    this.get('#/archive', function(ctx) {
+      showLoading();
+      this.buildTokenCSS();
+      this.setSearchHeader({type: 'archive'});
+      this.load($('#templates .action-index'))
+          .replace('#main')
+          .send(Action.viewDocs, 'by_complete', {
+        startkey: ["a","a"],
+        endkey: [1, null],
+        descending: true
+      })
+      .renderEach($('#action-template'))
+      .appendTo('#main .actions')
+      .then('formatTimes')
+      .then(hideLoading);
+    });
+
     this.get('#/action/:type/:token', function(ctx) {
       showLoading();
       this.buildTokenCSS();
@@ -11590,7 +11607,7 @@ if (!window.Mustache) {
 Action = Sammy('#container').createModel('action');
 Action.extend({
   tokens: {
-    modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the']
+    modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the','out']
   },
 
   loadTokens: function(callback) {

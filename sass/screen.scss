@@ -10,6 +10,8 @@
 // Import the non-default scaffolding module.
 @import "blueprint/scaffolding";
 
+@import "compass/utilities/lists";
+
 // To generate css equivalent to the blueprint css but with your
 // configuration applied, uncomment:
 // @include blueprint
@@ -114,6 +116,8 @@ $dk-grey: #626262;
   @include column($blueprint-grid-columns);
   @include clearfix;
   .action {
+    @include clearfix;
+
     &.complete {
       opacity: 0.5;
     }
@@ -133,10 +137,17 @@ $dk-grey: #626262;
       }
     }
     .meta {
+      @include horizontal-list;
+      @include column($blueprint-grid-columns - 2, true);
       @include prepend(1);
+//
+//      @include clearfix;
       color: $lt-grey;
       &:hover {
         color: $dk-grey;
+      }
+      .time {
+        color: $grey;
       }
     }
   }

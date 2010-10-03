@@ -138,7 +138,7 @@ form.inline p {
   margin-bottom: 0;
 }
 
-/* line 22, ../sass/screen.scss */
+/* line 24, ../sass/screen.scss */
 body.bp {
   line-height: 1.5;
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
@@ -508,7 +508,7 @@ form.bp textarea {
   height: 250px;
 }
 
-/* line 41, ../sass/screen.scss */
+/* line 43, ../sass/screen.scss */
 #container {
   width: 950px;
   margin: 0 auto;
@@ -516,7 +516,7 @@ form.bp textarea {
   *zoom: 1;
 }
 
-/* line 45, ../sass/screen.scss */
+/* line 47, ../sass/screen.scss */
 #header {
   display: inline;
   float: left;
@@ -531,30 +531,30 @@ form.bp textarea {
 * html #header {
   overflow-x: hidden;
 }
-/* line 50, ../sass/screen.scss */
+/* line 52, ../sass/screen.scss */
 #header h1 {
   font-weight: bold;
 }
-/* line 52, ../sass/screen.scss */
+/* line 54, ../sass/screen.scss */
 #header h1 a {
   color: #4D5B60;
   text-decoration: none;
 }
-/* line 56, ../sass/screen.scss */
+/* line 58, ../sass/screen.scss */
 #header h1 em {
   color: #999999;
   font-family: monospace;
 }
-/* line 60, ../sass/screen.scss */
+/* line 62, ../sass/screen.scss */
 #header h1 .search-type, #header h1 .search-token {
   font-size: 0.7em;
   padding: 0px 4px;
 }
-/* line 64, ../sass/screen.scss */
+/* line 66, ../sass/screen.scss */
 #header h1 .search-type {
   color: #626262;
 }
-/* line 68, ../sass/screen.scss */
+/* line 70, ../sass/screen.scss */
 #header #loading {
   position: absolute;
   top: 5px;
@@ -569,7 +569,7 @@ form.bp textarea {
   overflow-x: hidden;
 }
 
-/* line 76, ../sass/screen.scss */
+/* line 78, ../sass/screen.scss */
 #footer {
   display: inline;
   float: left;
@@ -586,7 +586,7 @@ form.bp textarea {
   overflow-x: hidden;
 }
 
-/* line 85, ../sass/screen.scss */
+/* line 87, ../sass/screen.scss */
 #main {
   display: inline;
   float: left;
@@ -600,7 +600,7 @@ form.bp textarea {
   overflow-x: hidden;
 }
 
-/* line 90, ../sass/screen.scss */
+/* line 92, ../sass/screen.scss */
 .action-form {
   padding: 20px 0px;
   display: inline;
@@ -614,7 +614,7 @@ form.bp textarea {
 * html .action-form {
   overflow-x: hidden;
 }
-/* line 95, ../sass/screen.scss */
+/* line 97, ../sass/screen.scss */
 .action-form form {
   line-height: 3;
 }
@@ -622,7 +622,7 @@ form.bp textarea {
 .action-form form p {
   margin-bottom: 0;
 }
-/* line 97, ../sass/screen.scss */
+/* line 99, ../sass/screen.scss */
 .action-form form .content-input {
   display: inline;
   float: left;
@@ -636,7 +636,7 @@ form.bp textarea {
 * html .action-form form .content-input {
   overflow-x: hidden;
 }
-/* line 103, ../sass/screen.scss */
+/* line 105, ../sass/screen.scss */
 .action-form form input[type="submit"] {
   border: 1px solid #e5e5e5;
   background: #738DB0;
@@ -645,7 +645,7 @@ form.bp textarea {
   padding: 8px 4px;
 }
 
-/* line 113, ../sass/screen.scss */
+/* line 115, ../sass/screen.scss */
 .actions {
   display: inline;
   float: left;
@@ -658,11 +658,16 @@ form.bp textarea {
 * html .actions {
   overflow-x: hidden;
 }
-/* line 117, ../sass/screen.scss */
+/* line 118, ../sass/screen.scss */
+.actions .action {
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 121, ../sass/screen.scss */
 .actions .action.complete {
   opacity: 0.5;
 }
-/* line 120, ../sass/screen.scss */
+/* line 124, ../sass/screen.scss */
 .actions .action .controls {
   display: inline;
   float: left;
@@ -674,7 +679,7 @@ form.bp textarea {
 * html .actions .action .controls {
   overflow-x: hidden;
 }
-/* line 124, ../sass/screen.scss */
+/* line 128, ../sass/screen.scss */
 .actions .action .content {
   display: inline;
   float: left;
@@ -686,34 +691,71 @@ form.bp textarea {
 * html .actions .action .content {
   overflow-x: hidden;
 }
-/* line 127, ../sass/screen.scss */
+/* line 131, ../sass/screen.scss */
 .actions .action .content a {
   text-decoration: none;
   color: inherit;
 }
-/* line 130, ../sass/screen.scss */
+/* line 134, ../sass/screen.scss */
 .actions .action .content a:hover {
   text-decoration: underline;
 }
-/* line 135, ../sass/screen.scss */
+/* line 139, ../sass/screen.scss */
 .actions .action .meta {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  overflow: hidden;
+  *zoom: 1;
+  display: inline;
+  float: left;
+  margin-right: 0;
+  width: 870px;
   padding-left: 40px;
   color: #e5e5e5;
 }
-/* line 138, ../sass/screen.scss */
+/* line 51, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/utilities/lists/_horizontal-list.scss */
+.actions .action .meta li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0px;
+  white-space: nowrap;
+  display: inline;
+  float: left;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+/* line 43, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/utilities/lists/_horizontal-list.scss */
+.actions .action .meta li:first-child, .actions .action .meta li.first {
+  padding-left: 0px;
+}
+/* line 44, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/utilities/lists/_horizontal-list.scss */
+.actions .action .meta li:last-child, .actions .action .meta li.last {
+  padding-right: 0px;
+}
+/* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html .actions .action .meta {
+  overflow-x: hidden;
+}
+/* line 146, ../sass/screen.scss */
 .actions .action .meta:hover {
   color: #626262;
 }
-/* line 144, ../sass/screen.scss */
+/* line 149, ../sass/screen.scss */
+.actions .action .meta .time {
+  color: #999999;
+}
+/* line 155, ../sass/screen.scss */
 .actions .verb {
   font-weight: bold;
 }
-/* line 147, ../sass/screen.scss */
+/* line 158, ../sass/screen.scss */
 .actions .modifier {
   font-weight: normal;
   font-color: #626262;
 }
-/* line 151, ../sass/screen.scss */
+/* line 162, ../sass/screen.scss */
 .actions .subject {
   font-weight: bold;
 }
