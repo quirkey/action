@@ -11,6 +11,7 @@
 @import "blueprint/scaffolding";
 
 @import "compass/utilities/lists";
+@import "compass/css3";
 
 // To generate css equivalent to the blueprint css but with your
 // configuration applied, uncomment:
@@ -72,6 +73,24 @@ $dk-grey: #626262;
     top: 5px;
     @include column($blueprint-grid-columns);
     text-align: center;
+  }
+  ul.menu {
+    @include inline-block-list(20);
+    @include opacity(0.2);
+    @include clearfix;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-align: right;
+    a {
+      color: $dk-grey;
+      padding: 0px 4px;
+      font-weight: bold;
+    }
+    &:hover {
+      @include transition("opacity", "1s", "ease");
+      @include opacity(1);
+    }
   }
 }
 
