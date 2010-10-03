@@ -126,7 +126,7 @@
     });
 
     this.get('#/archive', function(ctx) {
-      this.loadActions('viewCompleted', {});
+      this.loadActions('viewCompleted', {type: 'archive'});
     });
 
     this.get('#/action/:type/:token', function(ctx) {
@@ -152,6 +152,10 @@
       var update = {};
       if (data.complete) {
         update = {completed: true, completed_at: Action.timestamp()};
+        window.setTimeout(function() {
+          $('[data-id="' + data.id + '"]')
+            .fadeOut('slow', function() { $(this).remove() });
+        }, 1000 * 3);
       } else {
         update = {completed: false, completed_at: null};
       }
