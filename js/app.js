@@ -31,7 +31,10 @@
         }
         return rgb;
       },
-
+      textToColor: function(text, dark) {
+        var rgb = this.hexToRGB(hex_sha1(text).substr(3,9));
+        return "rgb(" + rgb.join(',') + ")";
+      },
       timestr: function(milli) {
         if (!milli || $.trim(milli) == '') { return ''; }
         var date = new Date(parseInt(milli, 10));
@@ -52,8 +55,8 @@
               var verb_inc, token, color, sheet = [], count;
               verb_inc = tokens.max['verb'] / ctx.colors.length;
               for (token in tokens.token_groups['verb']) {
-                count = tokens.token_groups['verb'][token];
-                color = ctx.colors[Math.round(count / verb_inc) - 1];
+                // count = tokens.token_groups['verb'][token];
+                color = ctx.textToColor(token);
                 Sammy.log('verb_inc', verb_inc, 'count', count, 'color', color);
                 sheet.push(['.verb-', token, ' { color:', color, ' !important;}'].join(''));
               }
@@ -131,6 +134,7 @@
     });
 
     this.get('#/replicate', function(ctx) {
+      showLoading();
       this.partial($('#replicator')).then(hideLoading);
     })
 
