@@ -11428,8 +11428,9 @@ if (!window.Mustache) {
       $('#loading').hide();
     };
 
-    var clearForm = function() {
-      $('.content-input').val('');
+    var clearForm = function($scope) {
+      $scope.find('.content-input').val('');
+      $scope.find('.action-preview').html('');
     };
 
     this.helpers({
@@ -11494,7 +11495,7 @@ if (!window.Mustache) {
         showLoading();
         this.buildTokenCSS();
         this.setSearchHeader(header || this.params);
-        this.load($('#templates .action-index'))
+        return this.load($('#templates .action-index'))
             .replace('#main')
             .send(Action[action_func], options)
             .renderEach($('#action-template'))
@@ -11527,6 +11528,15 @@ if (!window.Mustache) {
             }
           });
         });
+      },
+
+      handleEdit: function(id) {
+        if (!id) id = this.params.edit;
+        if (!id || id == '') return;
+
+        var $action = $('.action[data-id="' + id + '"]'),
+            $action_form = $('.action-form').clone(false);
+        $action.find('.content').hide().after($action_form);
       }
 
     });
@@ -11556,7 +11566,8 @@ if (!window.Mustache) {
     });
 
     this.get('#/', function(ctx) {
-      this.loadActions('viewIndex', {});
+      this.loadActions('viewIndex', {})
+          .send(this.handleEdit, this.params.edit);
     });
 
     this.post('#/action', function(ctx) {
@@ -11564,7 +11575,7 @@ if (!window.Mustache) {
           .then(function(response) {
             this.event_context.trigger('add-action', {id: response['id']});
           })
-          .send(clearForm);
+          .send(clearForm, $(this.target).parents('form').parent());
     });
 
     this.get('#/archive', function(ctx) {
@@ -11572,7 +11583,8 @@ if (!window.Mustache) {
     });
 
     this.get('#/action/:type/:token', function(ctx) {
-      this.loadActions('viewByToken', this.params, this.params.toHash());
+      this.loadActions('viewByToken', this.params, this.params.toHash())
+          .then('handleEdit');;
     });
 
     this.get('#/replicate', function(ctx) {

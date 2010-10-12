@@ -50,7 +50,7 @@
     <script id="action-template" type="text/mustache" data-engine="mustache">
       <div class="action{{#completed}} complete{{/completed}}" data-id="{{_id}}">
         <div class="controls">
-          <input type="checkbox" class="completed" name="completed" {{#completed}}checked="checked"{{/completed}}/>
+          <input type="checkbox" class="completed" name="completed" {{#completed}}checked="checked"{{/completed}} />
         </div>
         <div class="content">
           {{#parsed_html}}{{{parsed_html}}}{{/parsed_html}}{{^parsed_html}}{{content}}{{/parsed_html}}
@@ -58,6 +58,7 @@
         <ul class="meta">
           {{#completed}}<li class="completed_at"><strong>Completed</strong> <span class="timestr">{{completed_at}}</span></li>{{/completed}}
           <li class="updated_at"><strong>Updated</strong> <span class="timestr">{{updated_at}}</span></li>
+          <li><a href="{{path}}?edit={{_id}}" rel="edit" data-id="{{_id}}">Edit</a></li>
         </ul>
       </div>
     </script>
