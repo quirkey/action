@@ -11470,7 +11470,6 @@ if (!window.Mustache) {
               for (token in tokens.token_groups['verb']) {
                 // count = tokens.token_groups['verb'][token];
                 color = ctx.textToColor(token);
-                Sammy.log('verb_inc', verb_inc, 'count', count, 'color', color);
                 sheet.push(['.verb-', token, ' { color:', color, ' !important;}'].join(''));
               }
               var $sheet = $('style#verb-sheet');
@@ -11543,7 +11542,7 @@ if (!window.Mustache) {
     });
 
     this.get('#/action/:type/:token', function(ctx) {
-      this.loadActions('viewByToken', this.params, this.params);
+      this.loadActions('viewByToken', this.params, this.params.toHash());
     });
 
     this.get('#/replicate', function(ctx) {
@@ -11708,8 +11707,8 @@ Action.extend({
 
   viewByToken: function(options, callback) {
     return Action.viewDocs('by_token', $.extend({
-      startkey: [options.type, options.token + "a"],
-      endkey: [options.type, options.token],
+      startkey: [options.type, options.token + "a", "a"],
+      endkey: [options.type, options.token, null],
       descending: true
     }, options || {}), callback);
   }

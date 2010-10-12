@@ -2,7 +2,7 @@ function(doc) {
   if (doc.type == 'action' && doc.parsed && doc.parsed.hash) {
     for (var t in doc.parsed.hash) {
       for (var i = 0;i < doc.parsed.hash[t].length;i++) {
-        emit([t, doc.parsed.hash[t][i]], doc._id);
+        emit([t, doc.parsed.hash[t][i], !doc.completed_at, doc.updated_at], doc._id);
       }
     }
   }

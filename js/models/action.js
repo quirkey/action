@@ -120,8 +120,8 @@ Action.extend({
 
   viewByToken: function(options, callback) {
     return Action.viewDocs('by_token', $.extend({
-      startkey: [options.type, options.token + "a"],
-      endkey: [options.type, options.token],
+      startkey: [options.type, options.token + "a", "a"],
+      endkey: [options.type, options.token, null],
       descending: true
     }, options || {}), callback);
   }

@@ -57,7 +57,6 @@
               for (token in tokens.token_groups['verb']) {
                 // count = tokens.token_groups['verb'][token];
                 color = ctx.textToColor(token);
-                Sammy.log('verb_inc', verb_inc, 'count', count, 'color', color);
                 sheet.push(['.verb-', token, ' { color:', color, ' !important;}'].join(''));
               }
               var $sheet = $('style#verb-sheet');
@@ -130,7 +129,7 @@
     });
 
     this.get('#/action/:type/:token', function(ctx) {
-      this.loadActions('viewByToken', this.params, this.params);
+      this.loadActions('viewByToken', this.params, this.params.toHash());
     });
 
     this.get('#/replicate', function(ctx) {
