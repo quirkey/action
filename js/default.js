@@ -11500,6 +11500,12 @@ if (!window.Mustache) {
             .appendTo('#main .actions')
             .then('formatTimes')
             .then(hideLoading);
+      },
+
+      previewAction: function($input) {
+        var $preview = $input.parents('form').siblings('.action-preview'),
+            content = $input.val();
+        $preview.html(Action.parsedToHTML(Action.parse(content)));
       }
 
     });
@@ -11522,6 +11528,9 @@ if (!window.Mustache) {
       $('.action .subject').live('click', function(e) {
         e.preventDefault();
         ctx.redirect('#', 'action', 'subject', $(this).text());
+      });
+      $('.content-input').live('keyup', function(e) {
+        ctx.previewAction($(this));
       });
     });
 

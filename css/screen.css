@@ -686,14 +686,15 @@ form.bp textarea {
   margin-right: 10px;
   width: 870px;
   padding: 4px;
-  border: 1px solid #999999;
+  border: none;
+  border-bottom: 1px solid #999999;
   font-size: 2.2em;
 }
 /* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
 * html .action-form form .content-input {
   overflow-x: hidden;
 }
-/* line 124, ../sass/screen.scss */
+/* line 125, ../sass/screen.scss */
 .action-form form input[type="submit"] {
   border: 1px solid #e5e5e5;
   background: #738DB0;
@@ -702,7 +703,7 @@ form.bp textarea {
   padding: 8px 4px;
 }
 
-/* line 134, ../sass/screen.scss */
+/* line 135, ../sass/screen.scss */
 .actions {
   display: inline;
   float: left;
@@ -715,16 +716,16 @@ form.bp textarea {
 * html .actions {
   overflow-x: hidden;
 }
-/* line 137, ../sass/screen.scss */
+/* line 138, ../sass/screen.scss */
 .actions .action {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 140, ../sass/screen.scss */
+/* line 141, ../sass/screen.scss */
 .actions .action.complete {
   opacity: 0.5;
 }
-/* line 143, ../sass/screen.scss */
+/* line 144, ../sass/screen.scss */
 .actions .action .controls {
   display: inline;
   float: left;
@@ -736,7 +737,7 @@ form.bp textarea {
 * html .actions .action .controls {
   overflow-x: hidden;
 }
-/* line 147, ../sass/screen.scss */
+/* line 148, ../sass/screen.scss */
 .actions .action .content {
   display: inline;
   float: left;
@@ -748,16 +749,16 @@ form.bp textarea {
 * html .actions .action .content {
   overflow-x: hidden;
 }
-/* line 150, ../sass/screen.scss */
+/* line 151, ../sass/screen.scss */
 .actions .action .content a {
   text-decoration: none;
   color: inherit;
 }
-/* line 153, ../sass/screen.scss */
+/* line 154, ../sass/screen.scss */
 .actions .action .content a:hover {
   text-decoration: underline;
 }
-/* line 158, ../sass/screen.scss */
+/* line 159, ../sass/screen.scss */
 .actions .action .meta {
   margin: 0;
   padding: 0;
@@ -795,24 +796,27 @@ form.bp textarea {
 * html .actions .action .meta {
   overflow-x: hidden;
 }
-/* line 165, ../sass/screen.scss */
+/* line 164, ../sass/screen.scss */
 .actions .action .meta:hover {
   color: #626262;
 }
-/* line 168, ../sass/screen.scss */
+/* line 167, ../sass/screen.scss */
 .actions .action .meta .time {
   color: #999999;
 }
+
 /* line 174, ../sass/screen.scss */
-.actions .verb {
+.verb {
   font-weight: bold;
 }
+
 /* line 177, ../sass/screen.scss */
-.actions .modifier {
+.modifier {
   font-weight: normal;
   font-color: #626262;
 }
+
 /* line 181, ../sass/screen.scss */
-.actions .subject {
+.subject {
   font-weight: bold;
 }

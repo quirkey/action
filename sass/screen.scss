@@ -118,7 +118,8 @@ $dk-grey: #626262;
     .content-input {
       @include column($blueprint-grid-columns - 2);
       padding: 4px;
-      border: 1px solid $grey;
+      border:none;
+      border-bottom: 1px solid $grey;
       font-size: 2.2em;
     }
     input[type="submit"] {
@@ -159,8 +160,6 @@ $dk-grey: #626262;
       @include horizontal-list;
       @include column($blueprint-grid-columns - 2, true);
       @include prepend(1);
-//
-//      @include clearfix;
       color: $lt-grey;
       &:hover {
         color: $dk-grey;
@@ -170,16 +169,15 @@ $dk-grey: #626262;
       }
     }
   }
-  //
-  .verb {
-    font-weight: bold;
-  }
-  .modifier {
-    font-weight: normal;
-    font-color: $dk-grey;
-  }
-  .subject {
-    font-weight: bold;
-  }
+}
 
+.verb {
+  font-weight: bold;
+}
+.modifier {
+  font-weight: normal;
+  font-color: $dk-grey;
+}
+.subject {
+  font-weight: bold;
 }
