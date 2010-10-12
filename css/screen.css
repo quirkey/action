@@ -688,13 +688,14 @@ form.bp textarea {
   padding: 4px;
   border: none;
   border-bottom: 1px solid #999999;
-  font-size: 2.2em;
+  font-size: 2em;
+  color: #999999;
 }
 /* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
 * html .action-form form .content-input {
   overflow-x: hidden;
 }
-/* line 125, ../sass/screen.scss */
+/* line 126, ../sass/screen.scss */
 .action-form form input[type="submit"] {
   border: 1px solid #e5e5e5;
   background: #738DB0;
@@ -703,7 +704,7 @@ form.bp textarea {
   padding: 8px 4px;
 }
 
-/* line 135, ../sass/screen.scss */
+/* line 136, ../sass/screen.scss */
 .actions {
   display: inline;
   float: left;
@@ -716,16 +717,16 @@ form.bp textarea {
 * html .actions {
   overflow-x: hidden;
 }
-/* line 138, ../sass/screen.scss */
+/* line 139, ../sass/screen.scss */
 .actions .action {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 141, ../sass/screen.scss */
+/* line 142, ../sass/screen.scss */
 .actions .action.complete {
   opacity: 0.5;
 }
-/* line 144, ../sass/screen.scss */
+/* line 145, ../sass/screen.scss */
 .actions .action .controls {
   display: inline;
   float: left;
@@ -737,28 +738,7 @@ form.bp textarea {
 * html .actions .action .controls {
   overflow-x: hidden;
 }
-/* line 148, ../sass/screen.scss */
-.actions .action .content {
-  display: inline;
-  float: left;
-  margin-right: 0;
-  width: 910px;
-  font-size: 2.4em;
-}
-/* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
-* html .actions .action .content {
-  overflow-x: hidden;
-}
-/* line 151, ../sass/screen.scss */
-.actions .action .content a {
-  text-decoration: none;
-  color: inherit;
-}
-/* line 154, ../sass/screen.scss */
-.actions .action .content a:hover {
-  text-decoration: underline;
-}
-/* line 159, ../sass/screen.scss */
+/* line 149, ../sass/screen.scss */
 .actions .action .meta {
   margin: 0;
   padding: 0;
@@ -796,27 +776,63 @@ form.bp textarea {
 * html .actions .action .meta {
   overflow-x: hidden;
 }
-/* line 164, ../sass/screen.scss */
+/* line 154, ../sass/screen.scss */
 .actions .action .meta:hover {
   color: #626262;
 }
-/* line 167, ../sass/screen.scss */
+/* line 157, ../sass/screen.scss */
 .actions .action .meta .time {
   color: #999999;
 }
 
+/* line 164, ../sass/screen.scss */
+body.bp .actions .action .content, body.bp .action-preview {
+  display: inline;
+  float: left;
+  margin-right: 0;
+  width: 910px;
+  font-size: 2.4em;
+}
+/* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html body.bp .actions .action .content, * html body.bp .action-preview {
+  overflow-x: hidden;
+}
+/* line 167, ../sass/screen.scss */
+body.bp .actions .action .content a, body.bp .action-preview a {
+  text-decoration: none;
+  color: inherit;
+}
+/* line 170, ../sass/screen.scss */
+body.bp .actions .action .content a:hover, body.bp .action-preview a:hover {
+  text-decoration: underline;
+}
 /* line 174, ../sass/screen.scss */
-.verb {
+body.bp .actions .action .content .verb, body.bp .action-preview .verb {
   font-weight: bold;
 }
-
 /* line 177, ../sass/screen.scss */
-.modifier {
+body.bp .actions .action .content .modifier, body.bp .action-preview .modifier {
   font-weight: normal;
   font-color: #626262;
 }
-
 /* line 181, ../sass/screen.scss */
-.subject {
+body.bp .actions .action .content .subject, body.bp .action-preview .subject {
   font-weight: bold;
+}
+/* line 184, ../sass/screen.scss */
+body.bp .actions .action .content sup, body.bp .action-preview sup {
+  font-size: 35%;
+  color: #FFF;
+  background: #999999;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -o-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -khtml-border-radius: 8px;
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+/* line 192, ../sass/screen.scss */
+body.bp .action-preview {
+  padding: 4px;
 }

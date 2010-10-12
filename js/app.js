@@ -52,10 +52,11 @@
         var ctx = this;
         this.send(Action.loadTokens)
             .then(function(tokens) {
+              ctx.app.tokens = tokens; // assign tokens
               var verb_inc, token, color, sheet = [], count;
               verb_inc = tokens.max['verb'] / ctx.colors.length;
               for (token in tokens.token_groups['verb']) {
-                // count = tokens.token_groups['verb'][token];
+                count = tokens.token_groups['verb'][token];
                 color = ctx.textToColor(token);
                 sheet.push(['.verb-', token, ' { color:', color, ' !important;}'].join(''));
               }
@@ -93,6 +94,26 @@
         var $preview = $input.parents('form').siblings('.action-preview'),
             content = $input.val();
         $preview.html(Action.parsedToHTML(Action.parse(content)));
+        this.drawTokenCounts($preview);
+      },
+
+      drawTokenCounts: function($scope) {
+        var ctx = this;
+        if (!ctx.app.tokens) return;
+        $.each(['verb', 'subject'], function(i, token_type) {
+          $scope.find('.' + token_type).each(function() {
+            var $token = $(this),
+                token = $token.text(),
+                $sup = $token.children('sup'),
+                count = ctx.app.tokens.token_groups[token_type][token];
+            if (count) {
+              if ($sup.length == 0) {
+                $sup = $('<sup>').appendTo($token);
+              }
+              $sup.text(count);
+            }
+          });
+        });
       }
 
     });

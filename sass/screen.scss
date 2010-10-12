@@ -120,7 +120,8 @@ $dk-grey: #626262;
       padding: 4px;
       border:none;
       border-bottom: 1px solid $grey;
-      font-size: 2.2em;
+      font-size: 2em;
+      color: $grey;
     }
     input[type="submit"] {
       border: 1px solid $lt-grey;
@@ -145,17 +146,6 @@ $dk-grey: #626262;
       @include column(1);
       @include prepend-top;
     }
-    .content {
-      @include column($blueprint-grid-columns - 1, true);
-      font-size: 2.4em;
-      a {
-        text-decoration: none;
-        color: inherit;
-        &:hover {
-          text-decoration:underline;
-        }
-      }
-    }
     .meta {
       @include horizontal-list;
       @include column($blueprint-grid-columns - 2, true);
@@ -170,14 +160,36 @@ $dk-grey: #626262;
     }
   }
 }
-
-.verb {
-  font-weight: bold;
-}
-.modifier {
-  font-weight: normal;
-  font-color: $dk-grey;
-}
-.subject {
-  font-weight: bold;
+body.bp {
+  .actions .action .content, .action-preview {
+    @include column($blueprint-grid-columns - 1, true);
+    font-size: 2.4em;
+    a {
+      text-decoration: none;
+      color: inherit;
+      &:hover {
+        text-decoration:underline;
+      }
+    }
+    .verb {
+      font-weight: bold;
+    }
+    .modifier {
+      font-weight: normal;
+      font-color: $dk-grey;
+    }
+    .subject {
+      font-weight: bold;
+    }
+    sup {
+      font-size: 35%;
+      color: #FFF;
+      background: $grey;
+      @include border-radius(8px);
+      padding: 2px 4px;
+    }
+  }
+  .action-preview {
+    padding: 4px;
+  }
 }
