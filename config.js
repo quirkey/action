@@ -1,7 +1,9 @@
 {
   "id": "action",
   "mapDirectories": {
+    "config.js": "config",
     "index.html": "_attachments/index.html",
+    "favicon.ico": "_attachments/favicon.ico",
     "css": "_attachments/css",
     "images": "_attachments/images",
     "sass": false,
