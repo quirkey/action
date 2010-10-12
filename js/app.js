@@ -118,11 +118,21 @@
       },
 
       handleEdit: function(id) {
-        if (!id) id = this.params.edit;
-        if (!id || id == '') return;
+        if (!id) return;
 
         var $action = $('.action[data-id="' + id + '"]'),
-            $action_form = $('.action-form').clone(false);
+            $action_form = $('.action-index .action-form').clone(false);
+        Sammy.log('handleEdit', id, $action)
+        // edit the form to our will
+        $action_form
+          .find('form')
+            .attr('action', '#/action/' + id)
+            .attr('method', 'put')
+          .end()
+          .find('.content-input')
+            .val($.trim($action.find('.content').text()))
+            .trigger('focus')
+            .trigger('keyup');
         $action.find('.content').hide().after($action_form);
       }
 
@@ -171,7 +181,7 @@
 
     this.get('#/action/:type/:token', function(ctx) {
       this.loadActions('viewByToken', this.params, this.params.toHash())
-          .then('handleEdit');;
+          .send(this.handleEdit, this.params.edit);
     });
 
     this.get('#/replicate', function(ctx) {

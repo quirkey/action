@@ -27,7 +27,7 @@ Action.extend({
   parse: function(content) {
     var arr = [], hash = {};
     content = $.trim(content.toString()); // ensure string
-    tokens = content.split(/\s/g);
+    tokens = content.split(/\s+/g);
 
     var token,
         subject,
@@ -50,6 +50,7 @@ Action.extend({
     for (var i=0; i < tokens.length; i++) {
       token = tokens[i];
       next_token = tokens[i + 1];
+      if ($.trim(token) == '') break;
       switch (token_ctx) {
         case 'verb':
           pushToken('verb', token);
@@ -57,7 +58,9 @@ Action.extend({
           break;
         case 'subject':
           if (isModifier(token)) {
-            pushToken('subject', current.join(' '));
+            if (current.length > 0) {
+              pushToken('subject', current.join(' '));
+            }
             pushToken(false, token);
             current = [];
           } else {
@@ -71,6 +74,7 @@ Action.extend({
     if (current.length > 0) {
       pushToken('subject', current.join(' '));
     }
+    Sammy.log('parsed', content, arr);
     return {array: arr, hash: hash};
   },
 
