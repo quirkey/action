@@ -125,15 +125,17 @@
         Sammy.log('handleEdit', id, $action)
         // edit the form to our will
         $action_form
+          .appendTo($action)
           .find('form')
             .attr('action', '#/action/' + id)
             .attr('method', 'put')
           .end()
           .find('.content-input')
-            .val($.trim($action.find('.content').text()))
-            .trigger('focus')
-            .trigger('keyup');
-        $action.find('.content').hide().after($action_form);
+            .val($.trim($action.find('.content').text().replace(/\s+/, ' ')))
+            .trigger('keyup')
+            .focus()
+          .end()
+        $action.find('.content, .controls, .meta').hide();
       }
 
     });
@@ -160,11 +162,14 @@
       $('.content-input').live('keyup', function(e) {
         ctx.previewAction($(this));
       });
+      $('.action a.edit-action').live('click', function(e) {
+        e.preventDefault();
+        ctx.handleEdit($(this).attr('data-id'));
+      });
     });
 
     this.get('#/', function(ctx) {
-      this.loadActions('viewIndex', {})
-          .send(this.handleEdit, this.params.edit);
+      this.loadActions('viewIndex', {});
     });
 
     this.post('#/action', function(ctx) {
@@ -172,7 +177,12 @@
           .then(function(response) {
             this.event_context.trigger('add-action', {id: response['id']});
           })
-          .send(clearForm, $(this.target).parents('form').parent());
+          .send(clearForm, $(this.target).parents('.action-form'));
+    });
+
+    this.put('#/action/:id', function(ctx) {
+      this.send(Action.update, this.params.id, this.params['action'])
+          .trigger('reload-action', {id: this.params.id});
     });
 
     this.get('#/archive', function(ctx) {
@@ -180,8 +190,7 @@
     });
 
     this.get('#/action/:type/:token', function(ctx) {
-      this.loadActions('viewByToken', this.params, this.params.toHash())
-          .send(this.handleEdit, this.params.edit);
+      this.loadActions('viewByToken', this.params, this.params.toHash());
     });
 
     this.get('#/replicate', function(ctx) {
@@ -215,6 +224,20 @@
             data.$action.toggleClass('complete');
           });
     });
+
+    this.bind('reload-action', function(e, data) {
+      if (data.id) {
+        var $action = $('.action[data-id="' + data.id + '"]');
+        this.log('reload-action', data, $action);
+        this.send(Action.get, data['id'])
+            .render($('#action-template'))
+            .then(function(content) {
+              $action.replaceWith(content);
+            })
+            .then('formatTimes');
+      }
+    });
+
 
   });
 

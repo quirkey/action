@@ -560,7 +560,7 @@ form.bp textarea {
   top: 5px;
   display: inline;
   float: left;
-  margin-right: 10px;
+  margin-right: 0;
   width: 950px;
   text-align: center;
 }
@@ -630,7 +630,7 @@ form.bp textarea {
 #footer {
   display: inline;
   float: left;
-  margin-right: 10px;
+  margin-right: 0;
   width: 950px;
   font-size: 10px;
   color: #999999;
@@ -647,7 +647,7 @@ form.bp textarea {
 #main {
   display: inline;
   float: left;
-  margin-right: 10px;
+  margin-right: 0;
   width: 950px;
   overflow: hidden;
   *zoom: 1;
@@ -659,19 +659,20 @@ form.bp textarea {
 
 /* line 111, ../sass/screen.scss */
 .action-form {
-  padding: 20px 0px;
   display: inline;
   float: left;
-  margin-right: 10px;
+  margin-right: 0;
   width: 950px;
   overflow: hidden;
   *zoom: 1;
+  padding: 20px 0px;
+  position: relative;
 }
 /* line 139, ../../../../.rvm/gems/ruby-1.8.7-p249/gems/compass-0.10.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
 * html .action-form {
   overflow-x: hidden;
 }
-/* line 116, ../sass/screen.scss */
+/* line 117, ../sass/screen.scss */
 .action-form form {
   line-height: 3;
 }
@@ -679,12 +680,12 @@ form.bp textarea {
 .action-form form p {
   margin-bottom: 0;
 }
-/* line 118, ../sass/screen.scss */
+/* line 119, ../sass/screen.scss */
 .action-form form .content-input {
   display: inline;
   float: left;
   margin-right: 10px;
-  width: 870px;
+  width: 830px;
   padding: 4px;
   border: none;
   border-bottom: 1px solid #999999;
@@ -695,24 +696,60 @@ form.bp textarea {
 * html .action-form form .content-input {
   overflow-x: hidden;
 }
-/* line 125, ../sass/screen.scss */
+/* line 126, ../sass/screen.scss */
 .action-form form .content-input:focus {
   outline: none;
 }
-/* line 129, ../sass/screen.scss */
+/* line 130, ../sass/screen.scss */
+.action-form form .buttons {
+  width: 70px !important;
+  position: absolute;
+  right: 0px;
+}
+/* line 135, ../sass/screen.scss */
 .action-form form input[type="submit"] {
-  border: 1px solid #e5e5e5;
-  background: #738DB0;
-  color: #FFF;
+  color: #626262;
   font-size: 1.5em;
+  font-weight: bold;
   padding: 8px 4px;
+  background: none;
+  border: none;
+  margin-top: 16px;
+  text-align: center;
+}
+/* line 144, ../sass/screen.scss */
+.action-form form input[type="submit"]:hover {
+  color: #000;
+  -moz-transition-property: background;
+  -webkit-transition-property: background;
+  -o-transition-property: background;
+  transition-property: background;
+  -moz-transition-duration: 1s;
+  -webkit-transition-duration: 1s;
+  -o-transition-duration: 1s;
+  transition-duration: 1s;
+  -moz-transition-timing-function: ease;
+  -webkit-transition-timing-function: ease;
+  -o-transition-timing-function: ease;
+  transition-timing-function: ease;
+  background: #CCC;
+  -moz-border-radius: 2;
+  -webkit-border-radius: 2;
+  -o-border-radius: 2;
+  -ms-border-radius: 2;
+  -khtml-border-radius: 2;
+  border-radius: 2;
+}
+/* line 151, ../sass/screen.scss */
+.action-form form a.cancel {
+  color: #999999;
 }
 
-/* line 139, ../sass/screen.scss */
+/* line 157, ../sass/screen.scss */
 .actions {
   display: inline;
   float: left;
-  margin-right: 10px;
+  margin-right: 0;
   width: 950px;
   overflow: hidden;
   *zoom: 1;
@@ -721,16 +758,17 @@ form.bp textarea {
 * html .actions {
   overflow-x: hidden;
 }
-/* line 142, ../sass/screen.scss */
+/* line 160, ../sass/screen.scss */
 .actions .action {
   overflow: hidden;
   *zoom: 1;
+  position: relative;
 }
-/* line 145, ../sass/screen.scss */
+/* line 164, ../sass/screen.scss */
 .actions .action.complete {
   opacity: 0.5;
 }
-/* line 148, ../sass/screen.scss */
+/* line 167, ../sass/screen.scss */
 .actions .action .controls {
   display: inline;
   float: left;
@@ -742,7 +780,7 @@ form.bp textarea {
 * html .actions .action .controls {
   overflow-x: hidden;
 }
-/* line 152, ../sass/screen.scss */
+/* line 171, ../sass/screen.scss */
 .actions .action .meta {
   margin: 0;
   padding: 0;
@@ -780,16 +818,24 @@ form.bp textarea {
 * html .actions .action .meta {
   overflow-x: hidden;
 }
-/* line 157, ../sass/screen.scss */
+/* line 176, ../sass/screen.scss */
 .actions .action .meta:hover {
   color: #626262;
 }
-/* line 160, ../sass/screen.scss */
+/* line 179, ../sass/screen.scss */
 .actions .action .meta .time {
   color: #999999;
 }
+/* line 184, ../sass/screen.scss */
+.actions .action-form {
+  border-left: 1px solid #999999;
+}
+/* line 186, ../sass/screen.scss */
+.actions .action-form .content-input, .actions .action-form .action-preview {
+  padding-left: 40px;
+}
 
-/* line 167, ../sass/screen.scss */
+/* line 192, ../sass/screen.scss */
 body.bp .actions .action .content, body.bp .action-preview {
   display: inline;
   float: left;
@@ -801,29 +847,29 @@ body.bp .actions .action .content, body.bp .action-preview {
 * html body.bp .actions .action .content, * html body.bp .action-preview {
   overflow-x: hidden;
 }
-/* line 170, ../sass/screen.scss */
+/* line 195, ../sass/screen.scss */
 body.bp .actions .action .content a, body.bp .action-preview a {
   text-decoration: none;
   color: inherit;
 }
-/* line 173, ../sass/screen.scss */
+/* line 198, ../sass/screen.scss */
 body.bp .actions .action .content a:hover, body.bp .action-preview a:hover {
   text-decoration: underline;
 }
-/* line 177, ../sass/screen.scss */
+/* line 202, ../sass/screen.scss */
 body.bp .actions .action .content .verb, body.bp .action-preview .verb {
   font-weight: bold;
 }
-/* line 180, ../sass/screen.scss */
+/* line 205, ../sass/screen.scss */
 body.bp .actions .action .content .modifier, body.bp .action-preview .modifier {
   font-weight: normal;
   font-color: #626262;
 }
-/* line 184, ../sass/screen.scss */
+/* line 209, ../sass/screen.scss */
 body.bp .actions .action .content .subject, body.bp .action-preview .subject {
   font-weight: bold;
 }
-/* line 187, ../sass/screen.scss */
+/* line 212, ../sass/screen.scss */
 body.bp .actions .action .content sup, body.bp .action-preview sup {
   font-size: 35%;
   color: #FFF;
@@ -836,7 +882,7 @@ body.bp .actions .action .content sup, body.bp .action-preview sup {
   border-radius: 8px;
   padding: 2px 4px;
 }
-/* line 195, ../sass/screen.scss */
+/* line 220, ../sass/screen.scss */
 body.bp .action-preview {
-  padding: 4px;
+  padding: 0px 4px;
 }

@@ -74,7 +74,6 @@ Action.extend({
     if (current.length > 0) {
       pushToken('subject', current.join(' '));
     }
-    Sammy.log('parsed', content, arr);
     return {array: arr, hash: hash};
   },
 
@@ -102,7 +101,6 @@ Action.extend({
   beforeSave: function(doc) {
     doc.parsed = this.parse(doc.content);
     doc.parsed_html = this.parsedToHTML(doc.parsed);
-    Sammy.log('doc.parsed', doc.parsed);
     return doc;
   },
 

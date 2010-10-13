@@ -71,7 +71,7 @@ $dk-grey: #626262;
   #loading {
     position: absolute;
     top: 5px;
-    @include column($blueprint-grid-columns);
+    @include column($blueprint-grid-columns, true);
     text-align: center;
   }
   ul.menu {
@@ -95,7 +95,7 @@ $dk-grey: #626262;
 }
 
 #footer {
-  @include column($blueprint-grid-columns);
+  @include column($blueprint-grid-columns, true);
   font-size: 10px;
   color: $grey;
   margin-top: 20px;
@@ -104,19 +104,20 @@ $dk-grey: #626262;
 }
 
 #main {
-  @include column($blueprint-grid-columns);
+  @include column($blueprint-grid-columns, true);
   @include clearfix;
 }
 
 .action-form {
-  padding: 20px 0px;
-  @include column($blueprint-grid-columns);
+  @include column($blueprint-grid-columns, true);
   @include clearfix;
+  padding: 20px 0px;
+  position: relative;
 
   form {
     @include blueprint-inline-form;
     .content-input {
-      @include column($blueprint-grid-columns - 2);
+      @include column($blueprint-grid-columns - 3);
       padding: 4px;
       border:none;
       border-bottom: 1px solid $grey;
@@ -126,21 +127,39 @@ $dk-grey: #626262;
         outline: none;
       }
     }
+    .buttons {
+      @include span(2, true);
+      position: absolute;
+      right: 0px;
+    }
     input[type="submit"] {
-      border: 1px solid $lt-grey;
-      background: #738DB0;
-      color: #FFF;
+      color: $dk-grey;
       font-size: 1.5em;
+      font-weight: bold;
       padding: 8px 4px;
+      background: none;
+      border: none;
+      margin-top: 16px;
+      text-align: center;
+      &:hover {
+        color: #000;
+        @include transition("background", "1s", "ease");
+        background: #CCC;
+        @include border-radius(2)
+      }
+    }
+    a.cancel {
+      color: $grey;
     }
   }
 }
 
 .actions {
-  @include column($blueprint-grid-columns);
+  @include column($blueprint-grid-columns, true);
   @include clearfix;
   .action {
     @include clearfix;
+    position: relative;
 
     &.complete {
       opacity: 0.5;
@@ -160,6 +179,12 @@ $dk-grey: #626262;
       .time {
         color: $grey;
       }
+    }
+  }
+  .action-form {
+    border-left: 1px solid $grey;
+    .content-input, .action-preview {
+      @include prepend(1);
     }
   }
 }
@@ -193,6 +218,6 @@ body.bp {
     }
   }
   .action-preview {
-    padding: 4px;
+    padding: 0px 4px;
   }
 }

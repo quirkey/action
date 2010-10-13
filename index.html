@@ -30,7 +30,10 @@
       <div class="action-form">
         <form class="bp" action="#/action" method="post">
           <input name="action[content]" class="content-input" autocomplete="off">
-          <input type="submit" name="save" value="save">
+          <div class="buttons">
+            <input type="submit" name="save" value="&gt; save">
+            <!-- <a href="" class="cancel">cancel</a> -->
+          </div>
         </form>
         <div class="action-preview"></div>
       </div>
@@ -58,7 +61,7 @@
         <ul class="meta">
           {{#completed}}<li class="completed_at"><strong>Completed</strong> <span class="timestr">{{completed_at}}</span></li>{{/completed}}
           <li class="updated_at"><strong>Updated</strong> <span class="timestr">{{updated_at}}</span></li>
-          <li><a href="{{path}}?edit={{_id}}" rel="edit" data-id="{{_id}}">Edit</a></li>
+          <li><a href="{{path}}" class="edit-action" data-id="{{_id}}">Edit</a></li>
         </ul>
       </div>
     </script>
