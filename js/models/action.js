@@ -1,8 +1,10 @@
 Action = Sammy('#container').createModel('action');
 Action.extend({
   tokens: {
-    modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the','out','into','-']
+    modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the','out','into','-', 'on']
   },
+
+  chars: 'abcdefghijklmnopqrstuvwxyz0123456789'.split(''),
 
   loadTokens: function(callback) {
     Action.view('tokens', {group: true}, function(tokens) {
@@ -126,6 +128,23 @@ Action.extend({
       endkey: [options.type, options.token, null],
       descending: true
     }, options || {}), callback);
+  },
+
+  viewSearch: function(query, callback) {
+    var query = query.split(''); // = Action.chars[Action.chars.indexOf(query[0]) + 1];
+    // wildcard
+    if (query[query.length - 1] == '*') {
+      query.pop()
+      query.push('a');
+      next = [].concat(query);
+      next.push(null);
+    } else {
+      next = query
+    }
+    return Action.viewDocs('search', {
+      startkey: query,
+      endkey: next
+    }, callback);
   }
 
 });

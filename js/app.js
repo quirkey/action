@@ -189,9 +189,16 @@
       this.loadActions('viewCompleted', {type: 'archive'});
     });
 
+    this.get('#/action/search/:query', function(ctx) {
+      var q = this.params.query.toString();
+      this.loadActions('viewSearch', {type: 'search', token: q}, q);
+    });
+
     this.get('#/action/:type/:token', function(ctx) {
       this.loadActions('viewByToken', this.params, this.params.toHash());
     });
+
+
 
     this.get('#/replicate', function(ctx) {
       showLoading();
