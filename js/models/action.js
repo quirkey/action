@@ -1,7 +1,7 @@
 Action = Sammy('#container').createModel('action');
 Action.extend({
   tokens: {
-    modifiers: ['for','of','about','to','with','in','around','up','down','and','a','an','the','out','into','-', 'on']
+    modifiers: ['or','for','of','about','to','with','in','around','up','down','and','a','an','the','out','into','-', 'on','from', '#','/',':']
   },
 
   chars: 'abcdefghijklmnopqrstuvwxyz0123456789'.split(''),
@@ -29,7 +29,7 @@ Action.extend({
   parse: function(content) {
     var arr = [], hash = {};
     content = $.trim(content.toString()); // ensure string
-    tokens = content.split(/\s+/g);
+    tokens = content.split(/(\s+|-|\/|\:|\#)/g);
 
     var token,
         subject,
@@ -52,25 +52,26 @@ Action.extend({
     for (var i=0; i < tokens.length; i++) {
       token = tokens[i];
       next_token = tokens[i + 1];
-      if ($.trim(token) == '') break;
-      switch (token_ctx) {
-        case 'verb':
-          pushToken('verb', token);
-          token_ctx = 'subject';
-          break;
-        case 'subject':
-          if (isModifier(token)) {
-            if (current.length > 0) {
-              pushToken('subject', current.join(' '));
+      if ($.trim(token) != '') {
+        switch (token_ctx) {
+          case 'verb':
+            pushToken('verb', token);
+            token_ctx = 'subject';
+            break;
+          case 'subject':
+            if (isModifier(token)) {
+              if (current.length > 0) {
+                pushToken('subject', current.join(' '));
+              }
+              pushToken(false, token);
+              current = [];
+            } else {
+              current.push(token);
             }
-            pushToken(false, token);
-            current = [];
-          } else {
-            current.push(token);
-          }
-          break;
-        default:
-          pushToken(false, token)
+            break;
+          default:
+            pushToken(false, token)
+        }
       }
     }
     if (current.length > 0) {

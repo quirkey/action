@@ -20,6 +20,12 @@
       $scope.find('.action-preview').html('');
     };
 
+    var keymap = {
+      n: function() {
+       $('#main > .action-form .content-input').focus();
+      }
+    };
+
     this.helpers({
       colors: [
 
@@ -197,8 +203,6 @@
     this.get('#/action/:type/:token', function(ctx) {
       this.loadActions('viewByToken', this.params, this.params.toHash());
     });
-
-
 
     this.get('#/replicate', function(ctx) {
       showLoading();
