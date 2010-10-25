@@ -11440,9 +11440,6 @@ if (!window.Mustache) {
     };
 
     this.helpers({
-      colors: [
-
-      ],
       hexToRGB: function(hex) {
         hex = hex.replace(/^\#/,'');
         var rgb = [], i = 0;
@@ -11473,8 +11470,7 @@ if (!window.Mustache) {
         this.send(Action.loadTokens)
             .then(function(tokens) {
               ctx.app.tokens = tokens; // assign tokens
-              var verb_inc, token, color, sheet = [], count;
-              verb_inc = tokens.max['verb'] / ctx.colors.length;
+              var token, color, sheet = [], count;
               for (token in tokens.token_groups['verb']) {
                 count = tokens.token_groups['verb'][token];
                 color = ctx.textToColor(token);
@@ -11494,6 +11490,7 @@ if (!window.Mustache) {
         $('#header .search-type').text(params.type || '');
         $('#header .search-token')
           .text(params.token || '')
+          .attr('class', 'search-token')
           .addClass([params.type, params.token].join('-'));
       },
 
