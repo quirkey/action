@@ -5,7 +5,7 @@
         .use('Mustache')
         .use('Storage')
         .use('NestedParams')
-        .use('Couch');
+        .use('Couch', 'action');
 
     var showLoading = function() {
       $('#loading').show();
