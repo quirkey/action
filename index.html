@@ -39,14 +39,13 @@
       </div>
       <div class="actions"></div>
     </div>
-    <div class="action-replicator">
+    <div id="replicator" class="action-replicator">
       <h2>Replicate</h2>
-      <form class="bp" action="#/replicate" method="post">
-        <p><label>Username</label><input name="replication[username]"/></p>
-        <p><label>Password</label><input name="replication[password]" type="password"/></p>
-        <p><label>Host</label><input name="replication[host]" value="127.0.0.1"/></p>
-        <p><label>Port</label><input name="replication[port]" value="5984"/></p>
-        <p><label>Database</label><input name="replication[databse]" value="action"/></p>
+      <p>Copy this instance of Action and all of it's data to another CouchDB.</p>
+      <p>Usage: Create an empty database on another Couch and enter the URL to that database into the <strong>target</strong> field in the format: <pre>http://user:pass@couch/database</pre> If you omit the user/pass the Action application will not be copied to the new Couch, just the data.</p>
+      <form class="bp replicator-form" action="#/replicate" method="post">
+        <p class="hidden"><label>Source</label><input name="source" value="action"/></p>
+        <p><label>Target</label><input class="target" name="target" value="http://"/></p>
         <p><input type="submit" value="replicate"></p>
       </form>
     </div>

@@ -220,4 +220,14 @@ body.bp {
   .action-preview {
     padding: 0px 4px;
   }
+  .replicator-form {
+    .target {
+      width: 300px;
+      padding: 3px;
+      margin-left: 5px;
+    }
+    .hidden {
+      display: none;
+    }
+  }
 }
