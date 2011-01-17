@@ -5,7 +5,7 @@
         .use('Mustache')
         .use('Storage')
         .use('NestedParams')
-        .use('Couch');
+        .use('Couch', 'action');
 
     var showLoading = function() {
       $('#loading').show();
@@ -27,6 +27,37 @@
     };
 
     this.helpers({
+      serializeObject: function(obj) {
+        var o = {};
+        var a = $(obj).serializeArray();
+        $.each(a, function() {
+          if (o[this.name]) {
+            if (!o[this.name].push) {
+              o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+          } else {
+            o[this.name] = this.value || '';
+          }
+        });
+        return o;
+      },
+      
+      postReplication: function() {
+        var helpers = this;
+        $('.replicator-form').submit(function(e) {
+          e.preventDefault();
+          $.ajax({
+            url: "/_replicate", 
+            type: "post",
+            processData: false,
+            data: JSON.stringify(helpers.serializeObject(e.target)),
+            contentType: "application/json",
+            success: function() { helpers.redirect('#/'); console.log('wee') }
+          });
+        })
+      },
+      
       hexToRGB: function(hex) {
         hex = hex.replace(/^\#/,'');
         var rgb = [], i = 0;
@@ -35,10 +66,12 @@
         }
         return rgb;
       },
+      
       textToColor: function(text, dark) {
         var rgb = this.hexToRGB(hex_sha1(text).substr(3,9));
         return "rgb(" + rgb.join(',') + ")";
       },
+      
       timestr: function(milli) {
         if (!milli || $.trim(milli) == '') { return ''; }
         var date = new Date(parseInt(milli, 10));
@@ -203,7 +236,7 @@
 
     this.get('#/replicate', function(ctx) {
       showLoading();
-      this.partial($('#replicator')).then(hideLoading);
+      this.partial($('#replicator')).then(hideLoading).then('postReplication');
     })
 
     this.bind('add-action', function(e, data) {
