@@ -1,10 +1,9 @@
 {
   "bundle_dir": "js",
   "compressed_suffix": ".min",
-  "compressed_path": "js/production.js",
   "vendor_dir": "js/vendor",
   "bundles": {
-    "bundle_name": [
+    "default": [
       "sha1",
       "strftime",
       [
