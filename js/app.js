@@ -42,13 +42,13 @@
         });
         return o;
       },
-      
+
       postReplication: function() {
         var helpers = this;
         $('.replicator-form').submit(function(e) {
           e.preventDefault();
           $.ajax({
-            url: "/_replicate", 
+            url: "/_replicate",
             type: "post",
             processData: false,
             data: JSON.stringify(helpers.serializeObject(e.target)),
@@ -57,7 +57,7 @@
           });
         })
       },
-      
+
       hexToRGB: function(hex) {
         hex = hex.replace(/^\#/,'');
         var rgb = [], i = 0;
@@ -66,12 +66,12 @@
         }
         return rgb;
       },
-      
+
       textToColor: function(text, dark) {
         var rgb = this.hexToRGB(hex_sha1(text).substr(3,9));
         return "rgb(" + rgb.join(',') + ")";
       },
-      
+
       timestr: function(milli) {
         if (!milli || $.trim(milli) == '') { return ''; }
         var date = new Date(parseInt(milli, 10));
@@ -263,6 +263,19 @@
       this.send(Action.update, data.id, update)
           .then(function() {
             data.$action.toggleClass('complete');
+          });
+    });
+
+    this.bind('sleep-action', function(e, data) {
+      this.log('sleep-action', 'params', this.params, 'data', data);
+      var update = {sleeping: true, slept_at: Action.timestamp(), slept_count: (data.slept_count || 0) + 1};
+        window.setTimeout(function() {
+          $('[data-id="' + data.id + '"]')
+            .fadeOut('slow', function() { $(this).remove() });
+        }, 1000 * 3);
+      this.send(Action.update, data.id, update)
+          .then(function() {
+            data.$action.addClass('sleeping slept-' + update.slept_count);
           });
     });
 

@@ -164,6 +164,11 @@ $dk-grey: #626262;
     &.complete {
       opacity: 0.5;
     }
+    &:hover {
+      .meta {
+        color: $dk-grey;
+      }
+    }
     .controls {
       @include column(1);
       @include prepend-top;
@@ -173,11 +178,14 @@ $dk-grey: #626262;
       @include column($blueprint-grid-columns - 2, true);
       @include prepend(1);
       color: $lt-grey;
-      &:hover {
-        color: $dk-grey;
-      }
-      .time {
+      a {
         color: $grey;
+        font-weight: bold;
+        font-size: 1.1em;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline
+        }
       }
     }
   }
