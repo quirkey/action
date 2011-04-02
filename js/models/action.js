@@ -1,7 +1,7 @@
 Action = Sammy('#container').createModel('action');
 Action.extend({
   tokens: {
-    modifiers: ['or','for','of','about','to','with','in','around','up','down','and','a','an','the','out','into','-', 'on','from', '#','/',':']
+    modifiers: ['or','for','of','about','to','with','in','around','up','down','and','a','an','the','out','into','-', 'on','from', '#','/',':', '!']
   },
 
   chars: 'abcdefghijklmnopqrstuvwxyz0123456789'.split(''),
@@ -29,7 +29,7 @@ Action.extend({
   parse: function(content) {
     var arr = [], hash = {};
     content = $.trim(content.toString()); // ensure string
-    tokens = content.split(/(\s+|-|\/|\:|\#)/g);
+    tokens = content.split(/(\s+|-|\/|\:|#)/g);
 
     var token,
         subject,

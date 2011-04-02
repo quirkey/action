@@ -11836,7 +11836,7 @@ if (!window.Mustache) {
       this.send(Action.update, id, update)
           .then(function() {
             $action.toggleClass('complete');
-          });
+          }).trigger('next-action', {$action: $action});
     });
 
     this.bind('sleep-action', function(e, data) {
@@ -11852,7 +11852,7 @@ if (!window.Mustache) {
         this.send(Action.update, data.$action.d('id'), update)
           .then(function() {
             data.$action.addClass('sleeping slept-' + update.slept_count);
-          });
+          }).trigger('next-action', {$action: data.$action});
     });
 
     this.bind('edit-action', function(e, data) {
@@ -11889,6 +11889,7 @@ if (!window.Mustache) {
             })
             .then('formatTimes')
             .then(function() {
+              var $action = $('.action[data-id="' + data.id + '"]');
               this.event_context.focusOnAction($action);
             });
       }
@@ -11931,7 +11932,7 @@ if (!window.Mustache) {
 Action = Sammy('#container').createModel('action');
 Action.extend({
   tokens: {
-    modifiers: ['or','for','of','about','to','with','in','around','up','down','and','a','an','the','out','into','-', 'on','from', '#','/',':']
+    modifiers: ['or','for','of','about','to','with','in','around','up','down','and','a','an','the','out','into','-', 'on','from', '#','/',':', '!']
   },
 
   chars: 'abcdefghijklmnopqrstuvwxyz0123456789'.split(''),
@@ -11959,7 +11960,7 @@ Action.extend({
   parse: function(content) {
     var arr = [], hash = {};
     content = $.trim(content.toString()); // ensure string
-    tokens = content.split(/(\s+|-|\/|\:|\#)/g);
+    tokens = content.split(/(\s+|-|\/|\:|#)/g);
 
     var token,
         subject,

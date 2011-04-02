@@ -323,7 +323,7 @@
       this.send(Action.update, id, update)
           .then(function() {
             $action.toggleClass('complete');
-          });
+          }).trigger('next-action', {$action: $action});
     });
 
     this.bind('sleep-action', function(e, data) {
@@ -339,7 +339,7 @@
         this.send(Action.update, data.$action.d('id'), update)
           .then(function() {
             data.$action.addClass('sleeping slept-' + update.slept_count);
-          });
+          }).trigger('next-action', {$action: data.$action});
     });
 
     this.bind('edit-action', function(e, data) {
@@ -376,6 +376,7 @@
             })
             .then('formatTimes')
             .then(function() {
+              var $action = $('.action[data-id="' + data.id + '"]');
               this.event_context.focusOnAction($action);
             });
       }
