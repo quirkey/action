@@ -237,6 +237,10 @@
       this.loadActions('viewReview', {type: 'review'});
     });
 
+    this.get('#/asleep', function(ctx) {
+      this.loadActions('viewAsleep', {type: 'asleep'});
+    });
+
     this.get('#/action/search/:query', function(ctx) {
       var q = this.params.query.toString();
       this.loadActions('viewSearch', {type: 'search', token: q}, q);

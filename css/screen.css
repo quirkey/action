@@ -576,9 +576,9 @@ form.bp textarea {
   outline: 0;
   overflow: hidden;
   *zoom: 1;
-  opacity: 0.2;
-  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
+  opacity: 0.3;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
   overflow: hidden;
   *zoom: 1;
   position: absolute;
@@ -610,16 +610,22 @@ form.bp textarea {
   padding: 0px 4px;
   font-weight: bold;
 }
-/* line 90, ../sass/screen.scss */
+/* line 89, ../sass/screen.scss */
+#header ul.menu a.review {
+  color: #000;
+  padding: 0px 8px;
+  border-right: 1px solid #626262;
+}
+/* line 95, ../sass/screen.scss */
 #header ul.menu:hover {
   -moz-transition-property: opacity;
   -webkit-transition-property: opacity;
   -o-transition-property: opacity;
   transition-property: opacity;
-  -moz-transition-duration: 1s;
-  -webkit-transition-duration: 1s;
-  -o-transition-duration: 1s;
-  transition-duration: 1s;
+  -moz-transition-duration: 0.5s;
+  -webkit-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
+  transition-duration: 0.5s;
   -moz-transition-timing-function: ease;
   -webkit-transition-timing-function: ease;
   -o-transition-timing-function: ease;
@@ -629,7 +635,7 @@ form.bp textarea {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
 }
 
-/* line 97, ../sass/screen.scss */
+/* line 102, ../sass/screen.scss */
 #footer {
   display: inline;
   float: left;
@@ -646,7 +652,7 @@ form.bp textarea {
   overflow-x: hidden;
 }
 
-/* line 106, ../sass/screen.scss */
+/* line 111, ../sass/screen.scss */
 #main {
   display: inline;
   float: left;
@@ -660,7 +666,7 @@ form.bp textarea {
   overflow-x: hidden;
 }
 
-/* line 111, ../sass/screen.scss */
+/* line 116, ../sass/screen.scss */
 .action-form {
   display: inline;
   float: left;
@@ -675,7 +681,7 @@ form.bp textarea {
 * html .action-form {
   overflow-x: hidden;
 }
-/* line 117, ../sass/screen.scss */
+/* line 122, ../sass/screen.scss */
 .action-form form {
   line-height: 3;
 }
@@ -683,7 +689,7 @@ form.bp textarea {
 .action-form form p {
   margin-bottom: 0;
 }
-/* line 119, ../sass/screen.scss */
+/* line 124, ../sass/screen.scss */
 .action-form form .content-input {
   display: inline;
   float: left;
@@ -699,17 +705,17 @@ form.bp textarea {
 * html .action-form form .content-input {
   overflow-x: hidden;
 }
-/* line 126, ../sass/screen.scss */
+/* line 131, ../sass/screen.scss */
 .action-form form .content-input:focus {
   outline: none;
 }
-/* line 130, ../sass/screen.scss */
+/* line 135, ../sass/screen.scss */
 .action-form form .buttons {
   width: 70px !important;
   position: absolute;
   right: 0px;
 }
-/* line 135, ../sass/screen.scss */
+/* line 140, ../sass/screen.scss */
 .action-form form input[type="submit"] {
   color: #626262;
   font-size: 1.5em;
@@ -720,7 +726,7 @@ form.bp textarea {
   margin-top: 16px;
   text-align: center;
 }
-/* line 144, ../sass/screen.scss */
+/* line 149, ../sass/screen.scss */
 .action-form form input[type="submit"]:hover {
   color: #000;
   -moz-transition-property: background;
@@ -743,12 +749,12 @@ form.bp textarea {
   -khtml-border-radius: 2;
   border-radius: 2;
 }
-/* line 151, ../sass/screen.scss */
+/* line 156, ../sass/screen.scss */
 .action-form form a.cancel {
   color: #999999;
 }
 
-/* line 157, ../sass/screen.scss */
+/* line 162, ../sass/screen.scss */
 .actions {
   display: inline;
   float: left;
@@ -761,29 +767,29 @@ form.bp textarea {
 * html .actions {
   overflow-x: hidden;
 }
-/* line 160, ../sass/screen.scss */
+/* line 165, ../sass/screen.scss */
 .actions .action {
   overflow: hidden;
   *zoom: 1;
   position: relative;
 }
-/* line 164, ../sass/screen.scss */
+/* line 169, ../sass/screen.scss */
 .actions .action.complete {
   opacity: 0.5;
 }
-/* line 167, ../sass/screen.scss */
+/* line 172, ../sass/screen.scss */
 .actions .action.sleeping {
   opacity: 0.7;
 }
-/* line 169, ../sass/screen.scss */
+/* line 174, ../sass/screen.scss */
 .actions .action.sleeping .content {
   font-size: 1.8em !important;
 }
-/* line 174, ../sass/screen.scss */
+/* line 179, ../sass/screen.scss */
 .actions .action:hover .meta {
   color: #626262;
 }
-/* line 178, ../sass/screen.scss */
+/* line 183, ../sass/screen.scss */
 .actions .action .controls {
   display: inline;
   float: left;
@@ -795,7 +801,7 @@ form.bp textarea {
 * html .actions .action .controls {
   overflow-x: hidden;
 }
-/* line 182, ../sass/screen.scss */
+/* line 187, ../sass/screen.scss */
 .actions .action .meta {
   margin: 0;
   padding: 0;
@@ -833,27 +839,27 @@ form.bp textarea {
 * html .actions .action .meta {
   overflow-x: hidden;
 }
-/* line 187, ../sass/screen.scss */
+/* line 192, ../sass/screen.scss */
 .actions .action .meta a {
   color: #999999;
   font-weight: bold;
   font-size: 1.1em;
   text-decoration: none;
 }
-/* line 192, ../sass/screen.scss */
+/* line 197, ../sass/screen.scss */
 .actions .action .meta a:hover {
   text-decoration: underline;
 }
-/* line 198, ../sass/screen.scss */
+/* line 203, ../sass/screen.scss */
 .actions .action-form {
   border-left: 1px solid #999999;
 }
-/* line 200, ../sass/screen.scss */
+/* line 205, ../sass/screen.scss */
 .actions .action-form .content-input, .actions .action-form .action-preview {
   padding-left: 40px;
 }
 
-/* line 206, ../sass/screen.scss */
+/* line 211, ../sass/screen.scss */
 body.bp .actions .action .content, body.bp .action-preview {
   display: inline;
   float: left;
@@ -865,29 +871,29 @@ body.bp .actions .action .content, body.bp .action-preview {
 * html body.bp .actions .action .content, * html body.bp .action-preview {
   overflow-x: hidden;
 }
-/* line 209, ../sass/screen.scss */
+/* line 214, ../sass/screen.scss */
 body.bp .actions .action .content a, body.bp .action-preview a {
   text-decoration: none;
   color: inherit;
 }
-/* line 212, ../sass/screen.scss */
+/* line 217, ../sass/screen.scss */
 body.bp .actions .action .content a:hover, body.bp .action-preview a:hover {
   text-decoration: underline;
 }
-/* line 216, ../sass/screen.scss */
+/* line 221, ../sass/screen.scss */
 body.bp .actions .action .content .verb, body.bp .action-preview .verb {
   font-weight: bold;
 }
-/* line 219, ../sass/screen.scss */
+/* line 224, ../sass/screen.scss */
 body.bp .actions .action .content .modifier, body.bp .action-preview .modifier {
   font-weight: normal;
   font-color: #626262;
 }
-/* line 223, ../sass/screen.scss */
+/* line 228, ../sass/screen.scss */
 body.bp .actions .action .content .subject, body.bp .action-preview .subject {
   font-weight: bold;
 }
-/* line 226, ../sass/screen.scss */
+/* line 231, ../sass/screen.scss */
 body.bp .actions .action .content sup, body.bp .action-preview sup {
   font-size: 35%;
   color: #FFF;
@@ -900,17 +906,17 @@ body.bp .actions .action .content sup, body.bp .action-preview sup {
   border-radius: 8px;
   padding: 2px 4px;
 }
-/* line 234, ../sass/screen.scss */
+/* line 239, ../sass/screen.scss */
 body.bp .action-preview {
   padding: 0px 4px;
 }
-/* line 238, ../sass/screen.scss */
+/* line 243, ../sass/screen.scss */
 body.bp .replicator-form .target {
   width: 300px;
   padding: 3px;
   margin-left: 5px;
 }
-/* line 243, ../sass/screen.scss */
+/* line 248, ../sass/screen.scss */
 body.bp .replicator-form .hidden {
   display: none;
 }

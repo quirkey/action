@@ -139,6 +139,14 @@ Action.extend({
     }, options || {}), callback);
   },
 
+  viewAsleep: function(options, callback) {
+    return Action.viewDocs('asleep', $.extend({
+      startkey: ["a","a"],
+      endkey: [1, 0, null],
+      descending: true
+    }, options || {}), callback);
+  },
+
   viewSearch: function(query, callback) {
     var query = query.split(''); // = Action.chars[Action.chars.indexOf(query[0]) + 1];
     // wildcard

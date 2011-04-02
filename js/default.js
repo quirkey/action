@@ -11650,6 +11650,10 @@ if (!window.Mustache) {
       this.loadActions('viewReview', {type: 'review'});
     });
 
+    this.get('#/asleep', function(ctx) {
+      this.loadActions('viewAsleep', {type: 'asleep'});
+    });
+
     this.get('#/action/search/:query', function(ctx) {
       var q = this.params.query.toString();
       this.loadActions('viewSearch', {type: 'search', token: q}, q);
@@ -11860,6 +11864,14 @@ Action.extend({
     return Action.viewDocs('review', $.extend({
       startkey: ["a","a"],
       endkey: [1, null],
+      descending: true
+    }, options || {}), callback);
+  },
+
+  viewAsleep: function(options, callback) {
+    return Action.viewDocs('asleep', $.extend({
+      startkey: ["a","a"],
+      endkey: [1, 0, null],
       descending: true
     }, options || {}), callback);
   },
