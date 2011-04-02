@@ -38,7 +38,9 @@
       z: 'sleep-action',
       i: 'edit-action',
       a: 'edit-action',
-      n: 'new-action'
+      n: 'new-action',
+      g: 'first-action',
+      'shift+g': 'last-action'
     };
 
     this.helpers({
@@ -398,6 +400,13 @@
         });
     });
 
+    this.bind('first-action', function() {
+      this.focusOnAction($('.action:first'));
+    });
+
+    this.bind('last-action', function() {
+      this.focusOnAction($('.action:last'));
+    });
   });
 
   $(function() {
