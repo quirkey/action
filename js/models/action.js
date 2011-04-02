@@ -131,6 +131,14 @@ Action.extend({
     }, options || {}), callback);
   },
 
+  viewReview: function(options, callback) {
+    return Action.viewDocs('review', $.extend({
+      startkey: ["a","a"],
+      endkey: [1, null],
+      descending: true
+    }, options || {}), callback);
+  },
+
   viewSearch: function(query, callback) {
     var query = query.split(''); // = Action.chars[Action.chars.indexOf(query[0]) + 1];
     // wildcard

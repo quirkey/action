@@ -233,6 +233,10 @@
       this.loadActions('viewCompleted', {type: 'archive'});
     });
 
+    this.get('#/review', function(ctx) {
+      this.loadActions('viewReview', {type: 'review'});
+    });
+
     this.get('#/action/search/:query', function(ctx) {
       var q = this.params.query.toString();
       this.loadActions('viewSearch', {type: 'search', token: q}, q);
@@ -262,7 +266,7 @@
       if (data.complete) {
         update = {completed: true, completed_at: Action.timestamp()};
         window.setTimeout(function() {
-          data.$action.fadeOut('slow', function() { $(this).remove() });
+          data.$action.fadeOut('slow', function() { $(this).remove(); });
         }, 1000 * 3);
       } else {
         update = {completed: false, completed_at: null};
@@ -277,8 +281,8 @@
       this.log('sleep-action', 'params', this.params, 'data', data);
       var update = {sleeping: true, slept_at: Action.timestamp(), slept_count: (data.slept_count || 0) + 1};
         window.setTimeout(function() {
-          data.action.fadeOut('slow', function() { $(this).remove(); });
-        }, 1000 * 3);
+          data.$action.fadeOut('slow', function() { $(this).remove(); });
+        }, 1000);
         this.send(Action.update, data.id, update)
           .then(function() {
             data.$action.addClass('sleeping slept-' + update.slept_count);
