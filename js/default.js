@@ -8072,6 +8072,7 @@ window.jQuery = window.$ = jQuery;
   });
 
 })( jQuery );
+
 // name: sammy
 // version: 0.6.1
 
@@ -11527,15 +11528,26 @@ if (!window.Mustache) {
       $('#loading').hide();
     };
 
+   // animate scroll the window to the current element
+    var slideTo = function($el, offset, speed) {
+      if (!speed) { speed = 400; }
+      var top = $el.offset().top - (offset || 0);
+      $('body,html').animate({'scrollTop': top + 'px'}, speed);
+    };
+
     var clearForm = function($scope) {
       $scope.find('.content-input').val('');
       $scope.find('.action-preview').html('');
     };
 
     var keymap = {
-      n: function() {
-       $('#main > .action-form .content-input').focus();
-      }
+      j: 'next-action',
+      k: 'prev-action',
+      esc: 'toggle-mode',
+      x: 'toggle-action',
+      z: 'sleep-action',
+      i: 'edit-action',
+      a: 'edit-action'
     };
 
     this.helpers({
@@ -11670,7 +11682,7 @@ if (!window.Mustache) {
 
         var $action = $('.action[data-id="' + id + '"]'),
             $action_form = $('.action-index .action-form').clone(false);
-        Sammy.log('handleEdit', id, $action)
+        Sammy.log('handleEdit', id, $action);
         // edit the form to our will
         $action_form
           .appendTo($action)
@@ -11682,14 +11694,45 @@ if (!window.Mustache) {
             .val($.trim($action.find('.content').text().replace(/\s+/, ' ')))
             .trigger('keyup')
             .focus()
-          .end()
+          .end();
         $action.find('.content, .controls, .meta').hide();
+      },
+
+      focusOnAction: function($action) {
+        if (this.app.$focused) {
+          this.app.$focused.removeClass('focused');
+        }
+        $action.addClass('focused');
+        slideTo($action, $action.outerHeight());
+        this.app.$focused = $action;
+        return this.app.$focused;
+      },
+
+      focusedAction: function() {
+        if (this.app.$focused && this.app.$focused.is(':visible')) {
+          return this.app.$focused;
+        } else {
+          return this.focusOnAction($('.action:first'));
+        }
+      },
+
+      bindHotkeys: function() {
+        this.app.keymode = 'input';
+        var ctx = this;
+        $.each(keymap, function(key, eventname) {
+          $(document)
+            .bind('keyup', key, function() {
+              Sammy.log('hotkey', key, eventname);
+              ctx.trigger(eventname, {$action: ctx.focusedAction()});
+            });
+        });
       }
 
     });
 
     this.bind('run', function() {
       showLoading();
+      this.bindHotkeys();
       var ctx = this;
       $('.action input.completed').live('click', function() {
         var $action = $(this).parents('.action');
@@ -11764,8 +11807,10 @@ if (!window.Mustache) {
 
     this.get('#/replicate', function(ctx) {
       showLoading();
-      this.partial($('#replicator')).then(hideLoading).then('postReplication');
-    })
+      this.partial($('#replicator'))
+      .then(hideLoading)
+      .then('postReplication');
+    });
 
     this.bind('add-action', function(e, data) {
       this.log('add-action', 'params', this.params, 'data', data);
@@ -11816,6 +11861,16 @@ if (!window.Mustache) {
             })
             .then('formatTimes');
       }
+    });
+
+    this.bind('next-action', function(e, data) {
+      var $action = data.$action;
+      this.focusOnAction($action.next('.action'));
+    });
+
+    this.bind('prev-action', function(e, data) {
+      var $action = data.$action;
+      this.focusOnAction($action.prev('.action'));
     });
 
   });

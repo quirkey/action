@@ -169,6 +169,9 @@ $dk-grey: #626262;
     &.complete {
       opacity: 0.5;
     }
+    &.focused {
+      background: $lt-grey;
+    }
     &.sleeping {
       opacity: 0.7;
       .content {
