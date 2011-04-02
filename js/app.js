@@ -37,7 +37,8 @@
       x: 'toggle-action',
       z: 'sleep-action',
       i: 'edit-action',
-      a: 'edit-action'
+      a: 'edit-action',
+      n: 'new-action'
     };
 
     this.helpers({
@@ -168,7 +169,9 @@
       },
 
       focusOnAction: function($action) {
-        if (!$action || $action.length === 0) { return; }
+        if (!$action || $action.length === 0) {
+          $action = this.app.$focused || $('.action:first');
+        }
         if (this.app.$focused) {
           this.app.$focused.removeClass('focused');
         }
@@ -182,7 +185,7 @@
         if (this.app.$focused && this.app.$focused.is(':visible')) {
           return this.app.$focused;
         } else {
-          return this.focusOnAction($('.action:first'));
+          return this.focusOnAction();
         }
       },
 
@@ -384,6 +387,15 @@
     this.bind('prev-action', function(e, data) {
       var $action = data.$action;
       this.focusOnAction($action.prev('.action'));
+    });
+
+    this.bind('new-action', function(e, data) {
+      var ctx = this;
+      $('.action-form:first input.content-input').focus()
+        .one('keyup', 'esc', function() {
+          $(this).blur();
+          ctx.focusOnAction();
+        });
     });
 
   });
