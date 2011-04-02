@@ -11737,8 +11737,11 @@ if (!window.Mustache) {
       var ctx = this;
       $('.action input.completed').live('click', function() {
         var $input = $(this), $action = $input.parents('.action');
+        // race condition with the checkbox
         setTimeout(function() {
-          ctx.trigger('toggle-action', {$action: $action, complete: $input.attr('checked')});
+          ctx.trigger('toggle-action', {
+            $action: $action, complete:
+            $input.attr('checked')});
         }, 10);
       });
       $('.action .verb').live('click', function(e) {
@@ -11759,10 +11762,11 @@ if (!window.Mustache) {
       $('.action a.sleep-action').live('click', function() {
         var $link = $(this), $action = $link.parents('.action');
         ctx.trigger('sleep-action', {
-          id: $link.attr('data-id'),
-          slept_count: $link.attr('data-slept-count'),
           $action: $action
         });
+      });
+      $('.action').live('click', function() {
+        ctx.focusOnAction($(this));
       });
     });
 
@@ -11846,11 +11850,15 @@ if (!window.Mustache) {
 
     this.bind('sleep-action', function(e, data) {
       this.log('sleep-action', 'params', this.params, 'data', data);
-      var update = {sleeping: true, slept_at: Action.timestamp(), slept_count: (data.slept_count || 0) + 1};
+      var update = {
+         sleeping: true,
+         slept_at: Action.timestamp(),
+         slept_count: (data.$action.attr('data-slept-count').slept_count || 0) + 1};
+
         window.setTimeout(function() {
           data.$action.fadeOut('slow', function() { $(this).remove(); });
         }, 1000);
-        this.send(Action.update, data.id, update)
+        this.send(Action.update, data.$action.attr('data-id'), update)
           .then(function() {
             data.$action.addClass('sleeping slept-' + update.slept_count);
           });

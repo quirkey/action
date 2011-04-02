@@ -52,7 +52,7 @@
       </form>
     </div>
     <script id="action-template" type="text/mustache" data-engine="mustache">
-      <div class="action{{#completed}} complete{{/completed}}{{#sleeping}} sleeping slept-{{slept_count}}{{/sleeping}}" data-id="{{_id}}">
+      <div class="action{{#completed}} complete{{/completed}}{{#sleeping}} sleeping slept-{{slept_count}}{{/sleeping}}" data-slept-count="{{slept_count}}" data-id="{{_id}}">
         <div class="controls">
           <input type="checkbox" class="completed" name="completed" {{#completed}}checked="checked"{{/completed}} />
         </div>
@@ -62,7 +62,7 @@
         <ul class="meta">
           {{#completed}}<li class="completed_at"><strong>Completed</strong> <span class="timestr">{{completed_at}}</span></li>{{/completed}}
           {{^completed}}
-          <li><a href="{{path}}" class="sleep-action" data-id="{{_id}}" data-slept-count="{{slept-count}}">zZz</a></li>
+          <li><a href="{{path}}" class="sleep-action" data-id="{{_id}}" data-slept-count="{{slept_count}}">zZz</a></li>
           <li><a href="{{path}}" class="edit-action" data-id="{{_id}}">Edit</a></li>
           {{/completed}}
           <li class="updated_at"><strong>Updated</strong> <span class="timestr">{{updated_at}}</span></li>
