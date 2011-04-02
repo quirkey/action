@@ -11512,6 +11512,9 @@ if (!window.Mustache) {
 })(jQuery, window.Sammy);
 
 (function($) {
+  $.fn.d = function(n) {
+    return $(this).attr('data-' + n);
+  };
 
   var app = $.sammy('#container', function() {
     this.use('JSON')
@@ -11677,27 +11680,6 @@ if (!window.Mustache) {
         });
       },
 
-      handleEdit: function(id) {
-        if (!id) return;
-
-        var $action = $('.action[data-id="' + id + '"]'),
-            $action_form = $('.action-index .action-form').clone(false);
-        Sammy.log('handleEdit', id, $action);
-        // edit the form to our will
-        $action_form
-          .appendTo($action)
-          .find('form')
-            .attr('action', '#/action/' + id)
-            .attr('method', 'put')
-          .end()
-          .find('.content-input')
-            .val($.trim($action.find('.content').text().replace(/\s+/, ' ')))
-            .trigger('keyup')
-            .focus()
-          .end();
-        $action.find('.content, .controls, .meta').hide();
-      },
-
       focusOnAction: function($action) {
         if (!$action || $action.length === 0) { return; }
         if (this.app.$focused) {
@@ -11757,9 +11739,13 @@ if (!window.Mustache) {
       });
       $('.action a.edit-action').live('click', function(e) {
         e.preventDefault();
-        ctx.handleEdit($(this).attr('data-id'));
+        var $link = $(this), $action = $link.parents('.action');
+        ctx.trigger('edit-action', {
+          $action: $action
+        });
       });
-      $('.action a.sleep-action').live('click', function() {
+      $('.action a.sleep-action').live('click', function(e) {
+        e.preventDefault();
         var $link = $(this), $action = $link.parents('.action');
         ctx.trigger('sleep-action', {
           $action: $action
@@ -11826,7 +11812,7 @@ if (!window.Mustache) {
 
     this.bind('toggle-action', function(e, data) {
       var $action = data.$action,
-      id = $action.attr('data-id');
+      id = $action.d('id');
       var complete = data.complete;
       this.log('toggle-action', $action, 'complete', complete);
       if (typeof complete == 'undefined') {
@@ -11853,15 +11839,38 @@ if (!window.Mustache) {
       var update = {
          sleeping: true,
          slept_at: Action.timestamp(),
-         slept_count: (data.$action.attr('data-slept-count').slept_count || 0) + 1};
+         slept_count: (data.$action.d('slept-count').slept_count || 0) + 1};
 
         window.setTimeout(function() {
           data.$action.fadeOut('slow', function() { $(this).remove(); });
         }, 1000);
-        this.send(Action.update, data.$action.attr('data-id'), update)
+        this.send(Action.update, data.$action.d('id'), update)
           .then(function() {
             data.$action.addClass('sleeping slept-' + update.slept_count);
           });
+    });
+
+    this.bind('edit-action', function(e, data) {
+      var ctx = this,
+          $action = data.$action,
+          id = $action.d('id');
+          $action_form = $('.action-index .action-form').clone(false);
+      // edit the form to our will
+      $action_form
+        .appendTo($action)
+        .find('form')
+          .attr('action', '#/action/' + id)
+          .attr('method', 'put')
+        .end()
+        .find('.content-input')
+          .val($.trim($action.find('.content').text().replace(/\s+/, ' ')))
+          .trigger('keyup')
+          .bind('keyup', 'esc', function() {
+            ctx.trigger('reload-action', {id: id});
+           })
+          .focus()
+        .end();
+      $action.find('.content, .controls, .meta').hide();
     });
 
     this.bind('reload-action', function(e, data) {
@@ -11873,7 +11882,10 @@ if (!window.Mustache) {
             .then(function(content) {
               $action.replaceWith(content);
             })
-            .then('formatTimes');
+            .then('formatTimes')
+            .then(function() {
+              this.event_context.focusOnAction($action);
+            });
       }
     });
 
