@@ -171,6 +171,9 @@ $dk-grey: #626262;
     }
     &.focused {
       background: $lt-grey;
+      .meta {
+        color: $dk-grey;
+      }
     }
     &.sleeping {
       opacity: 0.7;

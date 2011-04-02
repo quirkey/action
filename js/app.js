@@ -186,11 +186,12 @@
       },
 
       focusOnAction: function($action) {
+        if (!$action || $action.length === 0) { return; }
         if (this.app.$focused) {
           this.app.$focused.removeClass('focused');
         }
         $action.addClass('focused');
-        slideTo($action, $action.outerHeight());
+        slideTo($action, $action.outerHeight(), 200);
         this.app.$focused = $action;
         return this.app.$focused;
       },
@@ -222,12 +223,10 @@
       this.bindHotkeys();
       var ctx = this;
       $('.action input.completed').live('click', function() {
-        var $action = $(this).parents('.action');
-        ctx.trigger('toggle-action', {
-          id: $action.attr('data-id'),
-          $action: $action,
-          complete: $(this).attr('checked')
-        });
+        var $input = $(this), $action = $input.parents('.action');
+        setTimeout(function() {
+          ctx.trigger('toggle-action', {$action: $action, complete: $input.attr('checked')});
+        }, 10);
       });
       $('.action .verb').live('click', function(e) {
         e.preventDefault();
@@ -309,19 +308,26 @@
     });
 
     this.bind('toggle-action', function(e, data) {
-      this.log('toggle-action', 'params', this.params, 'data', data);
+      var $action = data.$action,
+      id = $action.attr('data-id');
+      var complete = data.complete;
+      this.log('toggle-action', $action, 'complete', complete);
+      if (typeof complete == 'undefined') {
+        $action.find('input:checkbox').click();
+        return;
+      }
       var update = {};
-      if (data.complete) {
+      if (complete) {
         update = {completed: true, completed_at: Action.timestamp()};
         window.setTimeout(function() {
-          data.$action.fadeOut('slow', function() { $(this).remove(); });
+          $action.fadeOut('slow', function() { $(this).remove(); });
         }, 1000 * 3);
       } else {
         update = {completed: false, completed_at: null};
       }
-      this.send(Action.update, data.id, update)
+      this.send(Action.update, id, update)
           .then(function() {
-            data.$action.toggleClass('complete');
+            $action.toggleClass('complete');
           });
     });
 
