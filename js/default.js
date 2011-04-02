@@ -11615,6 +11615,14 @@ if (!window.Mustache) {
         e.preventDefault();
         ctx.handleEdit($(this).attr('data-id'));
       });
+      $('.action a.sleep-action').live('click', function() {
+        var $link = $(this), $action = $link.parents('.action');
+        ctx.trigger('sleep-action', {
+          id: $link.attr('data-id'),
+          slept_count: $link.attr('data-slept-count'),
+          $action: $action
+        });
+      });
     });
 
     this.get('#/', function(ctx) {
@@ -11667,8 +11675,7 @@ if (!window.Mustache) {
       if (data.complete) {
         update = {completed: true, completed_at: Action.timestamp()};
         window.setTimeout(function() {
-          $('[data-id="' + data.id + '"]')
-            .fadeOut('slow', function() { $(this).remove() });
+          data.$action.fadeOut('slow', function() { $(this).remove() });
         }, 1000 * 3);
       } else {
         update = {completed: false, completed_at: null};
@@ -11683,10 +11690,9 @@ if (!window.Mustache) {
       this.log('sleep-action', 'params', this.params, 'data', data);
       var update = {sleeping: true, slept_at: Action.timestamp(), slept_count: (data.slept_count || 0) + 1};
         window.setTimeout(function() {
-          $('[data-id="' + data.id + '"]')
-            .fadeOut('slow', function() { $(this).remove() });
+          data.action.fadeOut('slow', function() { $(this).remove(); });
         }, 1000 * 3);
-      this.send(Action.update, data.id, update)
+        this.send(Action.update, data.id, update)
           .then(function() {
             data.$action.addClass('sleeping slept-' + update.slept_count);
           });
@@ -11704,7 +11710,6 @@ if (!window.Mustache) {
             .then('formatTimes');
       }
     });
-
 
   });
 

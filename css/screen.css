@@ -771,11 +771,19 @@ form.bp textarea {
 .actions .action.complete {
   opacity: 0.5;
 }
-/* line 168, ../sass/screen.scss */
+/* line 167, ../sass/screen.scss */
+.actions .action.sleeping {
+  opacity: 0.7;
+}
+/* line 169, ../sass/screen.scss */
+.actions .action.sleeping .content {
+  font-size: 1.8em !important;
+}
+/* line 174, ../sass/screen.scss */
 .actions .action:hover .meta {
   color: #626262;
 }
-/* line 172, ../sass/screen.scss */
+/* line 178, ../sass/screen.scss */
 .actions .action .controls {
   display: inline;
   float: left;
@@ -787,7 +795,7 @@ form.bp textarea {
 * html .actions .action .controls {
   overflow-x: hidden;
 }
-/* line 176, ../sass/screen.scss */
+/* line 182, ../sass/screen.scss */
 .actions .action .meta {
   margin: 0;
   padding: 0;
@@ -825,27 +833,27 @@ form.bp textarea {
 * html .actions .action .meta {
   overflow-x: hidden;
 }
-/* line 181, ../sass/screen.scss */
+/* line 187, ../sass/screen.scss */
 .actions .action .meta a {
   color: #999999;
   font-weight: bold;
   font-size: 1.1em;
   text-decoration: none;
 }
-/* line 186, ../sass/screen.scss */
+/* line 192, ../sass/screen.scss */
 .actions .action .meta a:hover {
   text-decoration: underline;
 }
-/* line 192, ../sass/screen.scss */
+/* line 198, ../sass/screen.scss */
 .actions .action-form {
   border-left: 1px solid #999999;
 }
-/* line 194, ../sass/screen.scss */
+/* line 200, ../sass/screen.scss */
 .actions .action-form .content-input, .actions .action-form .action-preview {
   padding-left: 40px;
 }
 
-/* line 200, ../sass/screen.scss */
+/* line 206, ../sass/screen.scss */
 body.bp .actions .action .content, body.bp .action-preview {
   display: inline;
   float: left;
@@ -857,29 +865,29 @@ body.bp .actions .action .content, body.bp .action-preview {
 * html body.bp .actions .action .content, * html body.bp .action-preview {
   overflow-x: hidden;
 }
-/* line 203, ../sass/screen.scss */
+/* line 209, ../sass/screen.scss */
 body.bp .actions .action .content a, body.bp .action-preview a {
   text-decoration: none;
   color: inherit;
 }
-/* line 206, ../sass/screen.scss */
+/* line 212, ../sass/screen.scss */
 body.bp .actions .action .content a:hover, body.bp .action-preview a:hover {
   text-decoration: underline;
 }
-/* line 210, ../sass/screen.scss */
+/* line 216, ../sass/screen.scss */
 body.bp .actions .action .content .verb, body.bp .action-preview .verb {
   font-weight: bold;
 }
-/* line 213, ../sass/screen.scss */
+/* line 219, ../sass/screen.scss */
 body.bp .actions .action .content .modifier, body.bp .action-preview .modifier {
   font-weight: normal;
   font-color: #626262;
 }
-/* line 217, ../sass/screen.scss */
+/* line 223, ../sass/screen.scss */
 body.bp .actions .action .content .subject, body.bp .action-preview .subject {
   font-weight: bold;
 }
-/* line 220, ../sass/screen.scss */
+/* line 226, ../sass/screen.scss */
 body.bp .actions .action .content sup, body.bp .action-preview sup {
   font-size: 35%;
   color: #FFF;
@@ -892,17 +900,17 @@ body.bp .actions .action .content sup, body.bp .action-preview sup {
   border-radius: 8px;
   padding: 2px 4px;
 }
-/* line 228, ../sass/screen.scss */
+/* line 234, ../sass/screen.scss */
 body.bp .action-preview {
   padding: 0px 4px;
 }
-/* line 232, ../sass/screen.scss */
+/* line 238, ../sass/screen.scss */
 body.bp .replicator-form .target {
   width: 300px;
   padding: 3px;
   margin-left: 5px;
 }
-/* line 237, ../sass/screen.scss */
+/* line 243, ../sass/screen.scss */
 body.bp .replicator-form .hidden {
   display: none;
 }
